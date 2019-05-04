@@ -32,6 +32,8 @@ int getsum(int bit[],int index,int n)
 
 int main()
 {
+    //ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+
     int tc;
     scanf("%d",&tc);
 
