@@ -3,8 +3,7 @@
 
 Note :
 
-If the top of the stack is the same as current char , then pop.
-Otherwise push into the stack.
+Data Structure : Priority Queue
 
 */
 

@@ -3,8 +3,10 @@
 
 Note :
 
-If the top of the stack is the same as current char , then pop.
-Otherwise push into the stack.
+Naive implementation if Queue is modified in such a way that current minimum/maximum
+can be found in O(1).
+
+Data Structure : Modified Queue (using stack)
 
 */
 

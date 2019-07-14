@@ -1,4 +1,13 @@
 
+/*
+
+Note :
+
+Stable sort is used because the initial order should be maintained.
+Time Complexity : O( n * (log(n))^2 )
+
+*/
+
 /*Which of the favors of your Lord will you deny ?*/
 
 #include<bits/stdc++.h>
