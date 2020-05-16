@@ -62,7 +62,7 @@ void dfs(int v,int p)
                 dhongsho[v]=1;
             }
 
-            if(discov[v]<low[next] &&p!=-1)
+            if(discov[v]<=low[next] &&p!=-1)
             {
                 //bridge
                 dhongsho[v]=1;
