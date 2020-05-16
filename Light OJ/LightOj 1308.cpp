@@ -1,14 +1,21 @@
-
 /**
 
-1. Find the articulation bridges in the graph.
-2. If you remove the bridges, you will get several connected components.
-3. Think carefully, there are 2 types of components.
-4. The 1st one is the connected component which had more than one bridge, if you cut one bridge, it still can connect with other components through other bridge.
-4. The 2nd one is the component which had only one bridge, if you cut the bridge, it cannot connect with other components.
-5. You may think that the answer is the number of 2nd type bridge, as they need another one path to connect with other components.
-6. Think carefully, you may still minimize the number of edges required.
-7. If you connect one 2nd type component to another 2nd type component, then it requires one edge rather than two edges.
+LightOj 1308
+============
+
+Firstly there are 2 case :
+
+1 ) No Articulation point . Then there must be at least 2 shaft such that if one fails , other works
+
+2 ) Articulation point is present in the graph.
+No articulation point can have shaft in order to minimize the number of shafts.
+So , delete the articulation points and make a new Graph without them.
+Create a compressed SCC graph from that.
+If a SCC is connected to multiple Articulation Point , then it can use other shaft connected through one other articulation point .
+So , we only need to consider SCC's which are connected to less than 2 Articulation point.
+For the number of ways , one can put the shaft in any of the nodes in a SCC . So , the number of way is basically the multiplication of the sizes of all valid SCCs.
+
+Rest of the implementation is trivial.
 
 **/
 
@@ -68,17 +75,19 @@ string to_str(LL x)
 //
 //}
 
-vector<int>adj[nmax];
-set<int>newGraph[nmax];
+vector<PII>edges;
 
+vector<int>adj[nmax];
+vector<int>newGraph[nmax];
 vector<bool>visited;
 vector<int>SCCMap;
 
 vector<int> discov; /** Discovery time in DFS **/
 vector<int> low; /** min(all discovery time of subtree of a vertex u including the back-edge ancestors) **/
-vector<PII> articulationBridge;
+vector<bool> isArticulationPoint;
 int timer;
 int scc = 0;
+int numArticulationPoint = 0;
 
 void initialize()
 {
@@ -87,10 +96,11 @@ void initialize()
     SCCMap.assign(nmax,-1);
     discov.assign(nmax,-1);
     low.assign(nmax,-1);
-    articulationBridge.clear();
+    isArticulationPoint.assign(nmax,false);
+    edges.clear();
 
     for(int i=0; i<nmax; i++)
-        adj[i].clear() , newGraph[i].clear();
+        adj[i].clear(), newGraph[i].clear();
 }
 
 void dfs(int v,int p)
@@ -112,13 +122,11 @@ void dfs(int v,int p)
             dfs(next,v);
             low[v] = min(low[v],low[next]);
 
-            if(discov[v]<low[next])
-            {
-                articulationBridge.push_back({v,next});
-                newGraph[v].erase(next);
-                newGraph[next].erase(v);
-            }
+            if(child>1 && p==-1)
+                isArticulationPoint[v] = true, numArticulationPoint++;  /** ROOT **/
 
+            if(discov[v]<=low[next] && p!=-1)
+                isArticulationPoint[v] = true, numArticulationPoint++;
         }
     }
 }
@@ -144,7 +152,7 @@ int main()
     int tc;
     cin>>tc;
 
-    for(int q=1;q<=tc;q++)
+    for(int q=1; q<=tc; q++)
     {
         initialize();
 
@@ -158,21 +166,43 @@ int main()
             adj[a].push_back(b);
             adj[b].push_back(a);
 
-            newGraph[a].insert(b);
-            newGraph[b].insert(a);
+            edges.push_back({a,b});
         }
 
+        numArticulationPoint = 0;
+
         for(int i=0; i<n; i++)
-        {
             if(!visited[i])
                 dfs(i,-1);
+
+        //DBG(numArticulationPoint);
+
+        if(numArticulationPoint==0)
+        {
+            cout<<"Case "<<q<<": ";
+            LL ans = 2;
+            LL way = (n*(n-1))/2;
+
+            cout<<ans<<" "<<way<<endl;
+            continue;
+        }
+
+        for(auto e:edges)
+        {
+            if(isArticulationPoint[e.F] || isArticulationPoint[e.S])
+                continue;
+            newGraph[e.F].push_back(e.S);
+            newGraph[e.S].push_back(e.F);
         }
 
         visited.assign(nmax,false);
-        scc = 0;
 
+        scc = 0;
         for(int i=0; i<n; i++)
         {
+            if(isArticulationPoint[i])
+                continue;
+
             if(!visited[i])
             {
                 scc_dfs(i);
@@ -180,27 +210,45 @@ int main()
             }
         }
 
-        for(auto bridge:articulationBridge)
+        //DBG(scc);
+
+        vector<int>cntInSCC(scc,0);
+
+        for(int i=0; i<n; i++)
+            if(SCCMap[i]!=-1) cntInSCC[SCCMap[i]]++;
+
+        set<int> numArticulationPointInComp[scc];
+
+        for(auto e:edges)
         {
-            numBridgesConToComp[SCCMap[bridge.F]]++;
-            numBridgesConToComp[SCCMap[bridge.S]]++;
+            if(isArticulationPoint[e.F] && isArticulationPoint[e.S])
+                continue;
+            if(SCCMap[e.F]==SCCMap[e.S])
+                continue;
+
+            int ap = -1, op = -1;
+
+            if(isArticulationPoint[e.F])
+                ap = e.F, op = e.S;
+            if(isArticulationPoint[e.S])
+                ap = e.S, op = e.F;
+
+            numArticulationPointInComp[SCCMap[op]].insert(ap);
         }
 
-        int cc = 0;
+        LL ans = 0;
+        unsigned LL way = 1;
 
         for(int i=0;i<scc;i++)
         {
-            if(numBridgesConToComp[i]==1)
-                cc++;
+            if(numArticulationPointInComp[i].size()<=1)
+                ans++ , way *= cntInSCC[i];
         }
 
-        int ans = (cc+1)/2;
-
         cout<<"Case "<<q<<": ";
-        cout<<ans<<endl;
+        cout<<ans<<" "<<way<<endl;
     }
+
 
     return 0;
 }
-
-
