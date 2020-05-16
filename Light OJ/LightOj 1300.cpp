@@ -1,14 +1,15 @@
 
 /**
 
-1. Find the articulation bridges in the graph.
-2. If you remove the bridges, you will get several connected components.
-3. Think carefully, there are 2 types of components.
-4. The 1st one is the connected component which had more than one bridge, if you cut one bridge, it still can connect with other components through other bridge.
-4. The 2nd one is the component which had only one bridge, if you cut the bridge, it cannot connect with other components.
-5. You may think that the answer is the number of 2nd type bridge, as they need another one path to connect with other components.
-6. Think carefully, you may still minimize the number of edges required.
-7. If you connect one 2nd type component to another 2nd type component, then it requires one edge rather than two edges.
+Topic : Bridge , Odd Cycle / Bi-colorable
+
+hint 1:
+
+Show that, without bridges you can find two paths from a to b if they are connected.
+
+hint 2:
+
+Show that, in any non-bicolorable graph there is a cycle of odd length.
 
 **/
 
@@ -72,19 +73,24 @@ vector<int>adj[nmax];
 set<int>newGraph[nmax];
 
 vector<bool>visited;
-vector<int>SCCMap;
+vector<int>color;
+vector<int>cycleMap;
+vector<int>dist;
 
 vector<int> discov; /** Discovery time in DFS **/
 vector<int> low; /** min(all discovery time of subtree of a vertex u including the back-edge ancestors) **/
 vector<PII> articulationBridge;
 int timer;
-int scc = 0;
+int cnt = 0;
+bool oddCycle = false;
 
 void initialize()
 {
     timer = 0;
     visited.assign(nmax,false);
-    SCCMap.assign(nmax,-1);
+    color.assign(nmax,0);
+    cycleMap.assign(nmax,-1);
+    dist.assign(nmax,0);
     discov.assign(nmax,-1);
     low.assign(nmax,-1);
     articulationBridge.clear();
@@ -115,6 +121,7 @@ void dfs(int v,int p)
             if(discov[v]<low[next])
             {
                 articulationBridge.push_back({v,next});
+//                cout<<v<<"---"<<next<<endl;
                 newGraph[v].erase(next);
                 newGraph[next].erase(v);
             }
@@ -123,15 +130,18 @@ void dfs(int v,int p)
     }
 }
 
-void scc_dfs(int u)
+void cycle_dfs(int u,int p,int len)
 {
+    cnt++;
+    dist[u] = len;
     visited[u] = true;
-    SCCMap[u] = scc;
 
     for(int next:newGraph[u])
     {
         if(!visited[next])
-            scc_dfs(next);
+            cycle_dfs(next,u,len+1);
+        else if (visited[next] && (dist[next]-dist[u])%2==0) /** check the length of the loop defined by each back-edge **/
+            oddCycle = true;
     }
 }
 
@@ -169,31 +179,19 @@ int main()
         }
 
         visited.assign(nmax,false);
-        scc = 0;
+
+        int ans = 0;
 
         for(int i=0; i<n; i++)
         {
+            cnt = 0;
+            oddCycle = false;
             if(!visited[i])
-                scc_dfs(i);
+                cycle_dfs(i,-1,0);
 
-            scc++;
+            if(oddCycle)
+                ans += cnt;
         }
-
-        for(auto bridge:articulationBridge)
-        {
-            numBridgesConToComp[SCCMap[bridge.F]]++;
-            numBridgesConToComp[SCCMap[bridge.S]]++;
-        }
-
-        int cc = 0;
-
-        for(int i=0;i<scc;i++)
-        {
-            if(numBridgesConToComp[i]==1)
-                cc++;
-        }
-
-        int ans = (cc+1)/2;
 
         cout<<"Case "<<q<<": ";
         cout<<ans<<endl;
@@ -201,5 +199,55 @@ int main()
 
     return 0;
 }
+
+/**
+4
+
+4 6
+3 0
+0 1
+1 2
+0 2
+1 3
+2 3
+
+6 7
+4 1
+1 0
+2 3
+0 4
+0 2
+5 3
+0 5
+
+6 12
+2 1
+0 5
+5 4
+1 5
+2 5
+2 3
+4 0
+0 2
+3 0
+1 3
+3 5
+1 4
+
+8 13
+1 3
+7 4
+0 2
+5 3
+3 0
+5 7
+1 2
+1 0
+5 6
+1 6
+4 5
+0 6
+6 2
+**/
 
 
