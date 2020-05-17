@@ -1,5 +1,19 @@
 
-/*Which of the favors of your Lord will you deny ?*/
+/**
+
+Topic : Geometry
+================
+
+AB/AD = AC/AE = BC/DE
+
+We know that , If two triangles are similar, then the ratio of the area of both triangles is proportional
+to the square of the ratio of their corresponding sides.
+
+So , Area(ABC)/Area(ADE) = (AB/AD)^2 = (AC/AE)^2 = (BC/DE)^2
+
+**/
+
+/** Which of the favors of your Lord will you deny ?* */
 
 #include<bits/stdc++.h>
 using namespace std;

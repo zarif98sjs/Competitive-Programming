@@ -1,12 +1,27 @@
 
-/*Which of the favors of your Lord will you deny ?*/
+/**
+
+Topic : Binary Search
+=====================
+
+AB/AD = AC/AE = BC/DE
+
+So  , AE = (AC*AD)/AB
+and , DE = (BC*AD)/AB
+
+The area ratio of those two triangles can be calculated as a function of AD .
+So, we can use Binary Search .
+
+**/
+
+/** Which of the favors of your Lord will you deny ?* */
 
 #include<bits/stdc++.h>
 using namespace std;
 
 double triangleRatio (double ab,double ac,double bc,double ad)
 {
-    double ae=(ac*ad)/ab , de=(bc*ad)/ab,s1,s2;
+    double ae=(ac*ad)/ab, de=(bc*ad)/ab,s1,s2;
 
     s1 = (ab+ac+bc)/2.0;
     s2 = (ad+ae+de)/2.0;
@@ -23,26 +38,23 @@ double triangleRatio (double ab,double ac,double bc,double ad)
 }
 
 double BS(double ab,double ac,double bc,double ratio)
-
-{   double low , high , mid ,ad ;
+{
+    double low, high, mid,ad ;
 
     low = 0.0;
     high = ab;
 
-    for(int i=0;i<100;i++)
+    for(int i=0; i<100; i++)
     {
         mid = (low + high)/2.0;
         ad = mid;
         if(triangleRatio(ab,ac,bc,ad)>ratio)
             high = mid ;
-
         else
             low = mid;
 
     }
-
     return ad ;
-
 }
 
 int main()
@@ -50,7 +62,7 @@ int main()
     int n;
     scanf("%d",&n);
 
-    for(int i=1;i<=n;i++)
+    for(int i=1; i<=n; i++)
     {
         double ab,bc,ac,ratio;
         scanf("%lf %lf %lf %lf",&ab,&bc,&ac,&ratio);
