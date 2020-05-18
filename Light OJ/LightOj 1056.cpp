@@ -1,5 +1,15 @@
 
-/*Which of the favors of your Lord will you deny ?*/
+/**
+
+Topic : Geometry / Binary Search
+=================================
+
+Total Perimeter = 2(s+a) = 2*(r*theta +a) = 2*(sqrt(a^2+b^2)*arctan(b/a) + a)
+So, we can Binary Search over a
+
+**/
+
+/** Which of the favors of your Lord will you deny ? **/
 
 #include<bits/stdc++.h>
 using namespace std;
@@ -26,20 +36,17 @@ int main()
     {
         int x,y;
         char ch;
-        //scanf("%d%*c%d",&x,&y);
         cin>>x>>ch>>y;
 
         double a,b=(y/(x*1.0))*a;
 
-        double target=200; //400/2
+        double target=200; /// 400/2
 
         double lo=0,hi=200,mid=(lo+hi)/2;
         a=mid;
         b=(y/(x*1.0))*a;
 
-        double val=a+sqrt(a*a+b*b)*atan(b/(a*1.0));
-
-       // cout<<"* "<<val<<endl;
+        double val = sqrt(a*a+b*b)*atan(b/(a*1.0)) + a;
 
         while(1)
         {
@@ -50,24 +57,17 @@ int main()
             else if(val<target)
                 lo=mid;
 
-            mid=(lo+hi)/2;
-            a=mid;
-            b=(y/(x*1.0))*a;
+            mid = (lo+hi)/2;
+            a = mid;
+            b = (y/(x*1.0))*a;
 
-            val=a+sqrt(a*a+b*b)*atan(b/(a*1.0));
-
-            //cout<<val<<endl;
-            //cout<<a<<" & "<<b<<endl;
+            val = sqrt(a*a+b*b)*atan(b/(a*1.0)) + a;
         }
-
-        //printf("Val of a is %f\n",a);
 
         cout<<"Case "<<i<<": "<<fixed<<setprecision(8)<<a<<" "<<fixed<<setprecision(8)<<b<<endl;
 
 
     }
-
-
 
     return 0;
 

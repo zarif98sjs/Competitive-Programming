@@ -1,5 +1,14 @@
 
-/* Which of the favors of your Lord will you deny? */
+/**
+
+Topic : Geometry
+================
+
+Angle in one circle is (2*PI)/n
+
+**/
+
+/** Which of the favors of your Lord will you deny? **/
 
 #include<bits/stdc++.h>
 #include<string>

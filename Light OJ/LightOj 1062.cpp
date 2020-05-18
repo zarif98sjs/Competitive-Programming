@@ -1,6 +1,14 @@
-//Intersection of 2 line using cross product --> http://bit.ly/line_intersection
 
-/*Which of the favors of your Lord will you deny ?*/
+/**
+
+Topic : Geometry / Binary Search
+=================================
+
+Intersection of 2 line using cross product --> http://bit.ly/line_intersection
+
+**/
+
+/** Which of the favors of your Lord will you deny ? **/
 
 #include<bits/stdc++.h>
 using namespace std;
@@ -64,7 +72,7 @@ PT ComputeLineIntersection(PT a, PT b, PT c, PT d)
 const double eps = 1e-11;
 int cmp(double x, double y)
 {
-    return (x <= y + eps) ? (x + eps < y) ? -1 : 0 : 1; // 0 -> x equal y , 1 -> x>y , -1 -> x<y
+    return (x <= y + eps) ? (x + eps < y) ? -1 : 0 : 1; /** 0 -> x equal y , 1 -> x>y , -1 -> x<y **/
 }
 
 int main()
@@ -102,15 +110,9 @@ int main()
 
         }
 
-
-
-
         cout<<"Case "<<i<<": "<<fixed<<setprecision(8)<<d<<endl;
 
-
     }
-
-
 
     return 0;
 

@@ -1,8 +1,8 @@
 
 /**
 
-Topic : Binary Search
-=====================
+Topic : Geometry / Binary Search
+=================================
 
 AB/AD = AC/AE = BC/DE
 
@@ -10,7 +10,7 @@ So  , AE = (AC*AD)/AB
 and , DE = (BC*AD)/AB
 
 The area ratio of those two triangles can be calculated as a function of AD .
-So, we can use Binary Search .
+So, we can Binary Search over AD
 
 **/
 
