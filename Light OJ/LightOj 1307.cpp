@@ -1,13 +1,13 @@
 
 /**
 
-TAG : BINARY SEARCH | MEET IN THE MIDDLE
-=========================================
+TAG : BINARY SEARCH
+===================
 
-The idea is that you split the large set into two small sets, small enough for you to handle them using the standard algorithm you know,
-and then use the result from these two small sets to arrive at the required solution.
+For a triangle , the sum of any 2 side should be greater than the third side ,
+which is to say the sum of the 2 shorter sides should be greater than the third side.
 
-Complexity : O(2^(n / 2) log (2^(n / 2))
+i.e a + b > c [where a<=b<=c]
 
 **/
 
@@ -31,12 +31,10 @@ using namespace std;
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
 
-template<class TIn>
-using indexed_set = tree<
-                    TIn, null_type, less<TIn>,
-                    rb_tree_tag, tree_order_statistics_node_update>;
+template<class TIn>using indexed_set = tree<TIn, null_type, less<TIn>,rb_tree_tag, tree_order_statistics_node_update>;
 
-/*
+/**
+
 PBDS
 -------------------------------------------------
 1) insert(value)
@@ -44,7 +42,7 @@ PBDS
 3) order_of_key(value) // 0 based indexing
 4) *find_by_order(position) // 0 based indexing
 
-*/
+**/
 
 template<class T1, class T2>
 ostream &operator <<(ostream &os, pair<T1,T2>&p);
@@ -59,7 +57,7 @@ inline void optimizeIO()
     cin.tie(NULL);
 }
 
-const int nmax = 30+7;
+const int nmax = 2e3+7;
 const LL LINF = 1e17;
 
 string to_str(LL x)
@@ -74,24 +72,7 @@ string to_str(LL x)
 //
 //}
 
-vector<LL> subsetSum(const vector<LL> &v)
-{
-    int n = v.size();
-
-    vector<LL>sum;
-
-    for(int i=0;i<(1<<n);i++)
-    {
-        LL s = 0;
-        for(int j=0;j<n;j++)
-        {
-            if(i&(1<<j))
-                s += v[j];
-        }
-        sum.push_back(s);
-    }
-    return sum;
-}
+int ara[nmax];
 
 int main()
 {
@@ -102,34 +83,29 @@ int main()
     int tc;
     cin>>tc;
 
-    for(int q=1; q<=tc; q++)
+    for(int q=1;q<=tc;q++)
     {
         int n;
-        LL w;
-        cin>>n>>w;
+        cin>>n;
 
-        vector<LL>v1,v2;
+        for(int i=1;i<=n;i++)
+            cin>>ara[i];
 
-        for(int i=0;i<n;i++)
-        {
-            LL x;
-            cin>>x;
-
-            if(i&1) v2.push_back(x);
-            else v1.push_back(x);
-        }
-
-        vector<LL> subsetSum1 = subsetSum(v1);
-        vector<LL> subsetSum2 = subsetSum(v2);
-
-        sort(ALL(subsetSum2));
+        sort(ara+1,ara+n+1);
 
         LL ans = 0;
 
-        for(LL s1:subsetSum1)
+        for(int i=1;i<=n;i++)
         {
-            LL s2 = w - s1;
-            ans += upper_bound(ALL(subsetSum2),s2) - subsetSum2.begin();
+            for(int j=i+1;j<=n;j++)
+            {
+                int s = ara[i] + ara[j];
+                int val = lower_bound(ara+1,ara+n+1,s) - ara -1;
+
+                val -= j;
+                ans = ans + val;
+
+            }
         }
 
         cout<<"Case "<<q<<": ";
@@ -137,15 +113,18 @@ int main()
 
     }
 
-
     return 0;
 }
 
 /**
 
-10
-4 10
-1 4 2 8
+3
+5
+3 12 5 4 9
+6
+1 2 3 4 5 6
+4
+100 211 212 121
 
 **/
 
@@ -178,9 +157,5 @@ ostream &operator <<(ostream &os, set<T>&v)
     os<<" ]";
     return os;
 }
-
-
-
-
 
 
