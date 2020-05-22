@@ -1,0 +1,14 @@
+ROUND 603
+=========
+Solved During Contest : A,	B(Think Straight),	C
+Solved After Contest Myself : D (Couldn't solve for lack of time)
+Solved After Contest with Editorial : 
+Haven't Solved Yet : E (Segment Tree Problem , Doable , WILL DO IT)
+
+
+ROUND 604
+=========
+Solved During Contest : A,	B,	C
+Solved After Contest Myself : 
+Solved After Contest with Editorial : D(Think Straight),	E(Learned Expected Value, Practice more from LOJ)
+Haven't Solved Yet : F (DP, try sometime)
