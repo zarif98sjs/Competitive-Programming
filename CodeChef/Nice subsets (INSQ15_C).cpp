@@ -7,6 +7,12 @@ TAG : BINARY SEARCH | MEET IN THE MIDDLE
 The idea is that you split the large set into two small sets, small enough for you to handle them using the standard algorithm you know,
 and then use the result from these two small sets to arrive at the required solution.
 
+Problem Link :https://www.codechef.com/INSQ2015/problems/INSQ15_C
+
+Related Problems :
+
+LightOj 1127
+LightOj 1235
 
 **/
 
