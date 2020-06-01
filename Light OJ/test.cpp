@@ -1,147 +1,80 @@
-
-/**
-Articulation Bridge
-Complexity : O(N+M)
-Resources:
-1 ) http://www.shafaetsplanet.com/?p=2504
-2 ) https://cp-algorithms.com/graph/bridge-searching.html
-**/
-
-/** Which of the favors of your Lord will you deny ? **/
-
-#include<bits/stdc++.h>
-using namespace std;
-
-#define LL long long
-#define PII pair<int,int>
-#define PLL pair<LL,LL>
-#define MP make_pair
-#define F first
-#define S second
-#define INF INT_MAX
-
-#define ALL(x) (x).begin(), (x).end()
-#define DBG(x) cerr << __LINE__ << " says: " << #x << " = " << (x) << endl
-
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
-using namespace __gnu_pbds;
-
-template<class TIn>
-using indexed_set = tree<
-                    TIn, null_type, less<TIn>,
-                    rb_tree_tag, tree_order_statistics_node_update>;
-
 /*
-PBDS
--------------------------------------------------
-1) insert(value)
-2) erase(value)
-3) order_of_key(value) // 0 based indexing
-4) *find_by_order(position) // 0 based indexing
+    Author : RAJON BARDHAN
+    AUST CSE 27th Batch
+    All my programming success are dedicated to my mom , dad , little sister madhobi , teachers , friends and love TANIA SULTANA RIMY
+
+    Problem Name : 1064 - Throwing Dice ( LightOJ )
+    ALGORITHM : Probability + Dynamic Programming
 */
 
-inline void optimizeIO()
+#include <bits/stdc++.h>
+using namespace std;
+
+#define pb push_back
+#define ff first
+#define ss second
+#define mp make_pair
+#define memo(a,b) memset(a,b,sizeof(a))
+#define INF 1e9
+#define EPS 1e-8
+#define PI 3.14159265358979323846
+
+typedef long long ll ;
+typedef unsigned long long ull ;
+
+/* int dx[] = {1,-1,0,0} , dy[] = {0,0,1,-1}; */ // 4 Direction
+/* int dx[] = {1,-1,0,0,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1,1,-1}; */ // 8 Direction
+/* int dx[] = {1,-1,1,-1,2,2,-2,-2} , dy[] = {2,2,-2,-2,1,-1,1,-1}; */ // Knight Direction
+/* int dx[] = {2,-2,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1}; */ // Hexagonal Direction
+
+int n , x ;
+ll power[30] , dp[30][200] ;
+
+void pre_process()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
+    power[0] = 1 ;
+    for(int i=1;i<=25;i++) power[i] = power[i-1]*(ll)6 ;
 }
 
-const int nmax = 2e4+7;
-const LL LINF = 1e17;
-
-string to_str(LL x)
+ll solve(int pos,int sum)
 {
-    stringstream ss;
-    ss<<x;
-    return ss.str();
-}
-
-//bool cmp(const PII &A,const PII &B)
-//{
-//
-//}
-
-vector<int>adj[nmax];
-vector<bool>visited;
-
-vector<int> discov; /** Discovery time in DFS **/
-vector<int> low; /** min(all discovery time of subtree of a vertex u including the back-edge ancestors) **/
-vector<PII> articulationBridge;
-int timer;
-
-void initialize()
-{
-    timer = 0;
-    visited.assign(nmax,false);
-    discov.assign(nmax,-1);
-    low.assign(nmax,-1);
-    articulationBridge.clear();
-
-    for(int i=0; i<nmax; i++)
-        adj[i].clear();
-}
-
-void dfs(int v,int p)
-{
-    visited[v] = true;
-    discov[v] = low[v] = timer++;
-    int child = 0;
-
-    for(int next:adj[v])
+    if(pos>n)
     {
-        child++;
-
-        if(next==p)
-            continue;
-        if(visited[next])
-            low[v] = min(low[v],discov[next]);
-        else
-        {
-            dfs(next,v);
-            low[v] = min(low[v],low[next]);
-
-            if(discov[v]<low[next])
-                articulationBridge.push_back({v,next});
-        }
+        if(sum>=x) return 1 ;
+        else return 0 ;
     }
+    ll &ret = dp[pos][sum] ;
+    if(ret!=-1) return ret ;
+    ret = 0 ;
+    for(int i=1;i<=6;i++) ret+=solve(pos+1,sum+i);
+    return ret ;
 }
 
 int main()
 {
-    //freopen("out.txt","w",stdout);
+    //freopen("input.txt","r",stdin);
+    //freopen("output.txt","w",stdout);
 
-    optimizeIO();
+    pre_process();
 
-    initialize();
+    int T ;
+    scanf("%d",&T);
 
-    int n,m;
-    cin>>n>>m;
-
-    for(int i=1; i<=m; i++)
+    for(int cas=1;cas<=T;cas++)
     {
-        int a,b;
-        cin>>a>>b;
-        a++;
-        b++;
+        scanf("%d%d",&n,&x);
+        memo(dp,-1);
+        ll u = solve(1,0);
+        cout<<"U : "<<u<<endl;
+        ll v = power[n];
 
-        adj[a].push_back(b);
-        adj[b].push_back(a);
+        ll gcd = __gcd(u,v);
+        u/=gcd ;
+        v/=gcd ;
+
+        cout << "Case " << cas << ": " << u ;
+        if(v!=1&&u!=0) cout << '/' << v ;
+        cout << endl ;
     }
-
-    for(int i=1; i<=n; i++)
-    {
-        if(!visited[i])
-            dfs(i,-1);
-    }
-
-    int sz = articulationBridge.size();
-
-    cout<<sz<<" "<<"Articulation Bridges"<<endl;
-
-    for(auto x:articulationBridge)
-        cout<<x.F<<" - "<<x.S<<endl;
-
-
     return 0;
 }
