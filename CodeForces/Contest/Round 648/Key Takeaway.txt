@@ -1,0 +1,17 @@
+Problem D 
+=========
+For some weird reason , I dfs-ed from multiple source where the destination was only 1 . Later fixed during the contest .
+But , keep your head calm and 
+DO NOT MAKE THIS SILLY MISTAKES
+
+Problem E
+=========
+Always think of opposite case. Here we needed at least k-2 1's which means we needed at most 2 0's .
+This key idea leads to the problem solving using Pigeonhole principle.
+ALWAYS THINK OF THE OPPOSITE CASE
+
+Problem F
+=========
+Do some simulation and look for pattern.
+When prefixes and suffixes are swapped , the pair{i,n-i-1} always remains same [0 based indexing]
+LOOK FOR PATTERN
