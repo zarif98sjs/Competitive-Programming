@@ -10,7 +10,6 @@ using namespace std;
 #define MP make_pair
 #define F first
 #define S second
-#define INF INT_MAX
 
 #define ALL(x) (x).begin(), (x).end()
 #define DBG(x) cerr << __LINE__ << " says: " << #x << " = " << (x) << endl
@@ -63,69 +62,76 @@ string to_str(T x)
 //
 //}
 
+class Point
+{
+public:
+    LL x,y,z;
+
+    Point()
+    {
+        x = y = z;
+    }
+
+    Point(LL x,LL y,LL z)
+    {
+        this->x = x;
+        this->y = y;
+        this->z = z;
+    }
+};
+
+LL dist(Point a,Point b)
+{
+    LL d = (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y) + (a.z-b.z)*(a.z-b.z);
+
+    return d;
+}
+
 int main()
 {
-    //freopen("out.txt","w",stdout);
-
     optimizeIO();
 
-    int tc;
-    cin>>tc;
+    int n;
+    cin>>n;
 
-    while(tc--)
+    vector<Point>v;
+
+    for(int i=1; i<=n; i++)
     {
-        LL n,m;
-        cin>>n>>m;
+        LL a,b,c;
+        cin>>a>>b>>c;
 
-        indexed_set<LL>st;
-        unordered_set<LL>no;
+        v.push_back({a,b,c});
+    }
 
-        for(int i=0; i<n; i++)
+    vector<bool> ok(n);
+
+    for(int i=0; i<n; i++)
+    {
+        if(ok[i])
+            continue;
+
+        int id = -1;
+        LL min_d = LLONG_MAX;
+
+        for(int j=i+1; j<n; j++)
         {
-            string s;
-            cin>>s;
+            if(ok[j])
+                continue;
 
-            LL x = 0;
-            for(auto ch:s)
-                x = 2*x + ch - '0';
+            LL d = dist(v[i],v[j]);
 
-            st.insert(x);
-            no.insert(x);
+            if(d<min_d)
+            {
+                min_d = d;
+                id = j;
+            }
         }
 
-        LL k = (1LL<<m)-n;
-        LL left = (k+1)/2;
+        ok[i] = true;
+        ok[id] = true;
 
-        LL lo = 0, hi = (1LL<<m)-1;
-
-        while(lo<=hi)
-        {
-            LL mid = lo + (hi-lo)/2;
-
-            LL l = (mid+1) - (st.order_of_key(mid)) - (no.find(mid)!=no.end());
-
-            if(l<left)
-                lo = mid+1;
-            else
-                hi = mid-1;
-        }
-
-        LL ans = lo;
-
-        string res = "";
-
-        for(int i=0; i<m; i++)
-        {
-            res.push_back('0' + (ans&1));
-            ans/=2;
-        }
-
-        reverse(ALL(res));
-
-        cout<<res<<endl;
-//        cout<<endl;
-//
-
+        cout<<i+1<<" "<<id+1<<endl;
     }
 
     return 0;

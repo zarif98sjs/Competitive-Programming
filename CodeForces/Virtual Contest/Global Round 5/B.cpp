@@ -10,7 +10,6 @@ using namespace std;
 #define MP make_pair
 #define F first
 #define S second
-#define INF INT_MAX
 
 #define ALL(x) (x).begin(), (x).end()
 #define DBG(x) cerr << __LINE__ << " says: " << #x << " = " << (x) << endl
@@ -63,32 +62,44 @@ string to_str(T x)
 //
 //}
 
+int a[nmax];
+int b[nmax];
+bool ov[nmax];
+
 int main()
 {
     optimizeIO();
 
-    int tc;
-    cin>>tc;
+    int n;
+    cin>>n;
 
-    while(tc--)
+    queue<int>qa,qb;
+
+    for(int i=1;i<=n;i++) cin>>a[i] , qa.push(a[i]);
+    for(int i=1;i<=n;i++) cin>>b[i] , qb.push(b[i]);
+
+    while(!qa.empty() && !qb.empty())
     {
-        int n;
-        cin>>n;
+        while(ov[qa.front()])
+            qa.pop();
 
-        vector<int>v(n);
+        while(qa.front()!=qb.front())
+        {
+            ov[qb.front()] = true;
+//            DBG(qb.front());
+            qb.pop();
+        }
 
-        for(int i=0;i<n;i++)
-            cin>>v[i];
-
-        sort(ALL(v));
-
-        int ans = INT_MAX;
-        for(int i=1;i<n;i++)
-            ans = min(ans,v[i]-v[i-1]);
-
-        cout<<ans<<endl;
-//        cout<<endl;
+        qa.pop();
+        qb.pop();
     }
+
+    int ans = 0;
+
+    for(int i=1;i<=n;i++)
+        ans += ov[i];
+
+    cout<<ans<<endl;
 
     return 0;
 }

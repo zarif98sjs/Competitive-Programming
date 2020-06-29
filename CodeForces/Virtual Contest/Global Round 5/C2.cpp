@@ -10,7 +10,6 @@ using namespace std;
 #define MP make_pair
 #define F first
 #define S second
-#define INF INT_MAX
 
 #define ALL(x) (x).begin(), (x).end()
 #define DBG(x) cerr << __LINE__ << " says: " << #x << " = " << (x) << endl
@@ -58,63 +57,129 @@ string to_str(T x)
     return ss.str();
 }
 
-//bool cmp(const PII &A,const PII &B)
-//{
-//
-//}
+class Point
+{
+public:
+    LL x,y,z,id;
 
-char ara[55][55];
+    Point()
+    {
+        x = y = z = id = 0;
+    }
+
+    Point(LL x,LL y,LL z,LL id)
+    {
+        this->x = x;
+        this->y = y;
+        this->z = z;
+        this->id = id;
+    }
+};
+
+bool cmp(const Point &A,const Point &B)
+{
+    if(A.z==B.z)
+    {
+        if(A.y==B.y)
+            return A.x<B.x;
+
+        return A.y<B.y;
+    }
+
+    return A.z<B.z;
+}
+
+map< LL,vector<Point> >mpz;
+
+vector<PII>ans;
+
+Point solve_1d(vector<Point>&v)
+{
+    sort(ALL(v),cmp);
+
+    for(int i=0;i<(int)v.size()-1;i+=2)
+        ans.push_back({v[i].id,v[i+1].id});
+
+//    cout<<"Ans: "<<ans<<endl;
+
+    if(v.size()%2==1)
+        return v[v.size()-1];
+
+    return Point(0,0,0,-1);
+}
+
+Point solve_2d(const vector<Point>&v)
+{
+    map< LL,vector<Point> >mpy;
+
+    for(auto p:v)
+        mpy[p.y].push_back(p);
+
+    vector<Point> vp;
+
+    for(auto y:mpy)
+    {
+//        DBG(y.F);
+        Point temp = solve_1d(y.S);
+
+        if(temp.id!=-1)
+            vp.push_back(temp);
+    }
+
+//    DBG(vp.size());
+
+    for(int i=0;i<(int)vp.size()-1;i+=2)
+    {
+        ans.push_back({vp[i].id,vp[i+1].id});
+    }
+
+
+    if(vp.size()%2==1)
+        return vp[vp.size()-1];
+
+    return Point(0,0,0,-1);
+}
+
+void solve_3d()
+{
+    vector<Point> vp;
+
+    for(auto z:mpz)
+    {
+//        DBG(z.F);
+        Point temp = solve_2d(z.S);
+
+        if(temp.id!=-1)
+            vp.push_back(temp);
+    }
+
+    for(int i=0;i<vp.size();i+=2)
+        ans.push_back({vp[i].id,vp[i+1].id});
+
+    for(auto x:ans)
+        cout<<x.F<<" "<<x.S<<endl;
+}
 
 int main()
 {
     optimizeIO();
 
-    int tc;
-    cin>>tc;
+    int n;
+    cin>>n;
 
-    while(tc--)
+    vector<Point>v;
+
+    for(int i=0; i<n; i++)
     {
-        int r,c,r1,c1;
-        cin>>r>>c>>r1>>c1;
+        LL a,b,c;
+        cin>>a>>b>>c;
 
-        if(r*r1!=c*c1)
-        {
-            cout<<"NO"<<endl;
-            continue;
-        }
-
-        cout<<"YES"<<endl;
-
-        for(int i=0;i<r;i++)
-            for(int j=0;j<c;j++)
-                ara[i][j] = '0';
-
-        vector<PII>v;
-
-        for(int i=0;i<c;i++)
-            v.push_back({0,i});
-
-        for(int i=0;i<r;i++)
-        {
-            sort(ALL(v));
-
-            for(int j=0;j<r1;j++)
-            {
-                int vj = v[j].S;
-                ara[i][vj] = '1';
-                v[j].F++;
-            }
-        }
-
-        for(int i=0;i<r;i++)
-        {
-            for(int j=0;j<c;j++)
-                cout<<ara[i][j];
-            cout<<endl;
-        }
-
-//       cout<<endl;
+        v.push_back({a,b,c,i+1});
+        mpz[c].push_back(v[i]);
     }
+
+    solve_3d();
+
 
     return 0;
 }
@@ -152,3 +217,5 @@ ostream &operator <<(ostream &os, set<T>&v)
     os<<" ]";
     return os;
 }
+
+

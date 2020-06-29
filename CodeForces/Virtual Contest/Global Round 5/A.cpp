@@ -10,7 +10,6 @@ using namespace std;
 #define MP make_pair
 #define F first
 #define S second
-#define INF INT_MAX
 
 #define ALL(x) (x).begin(), (x).end()
 #define DBG(x) cerr << __LINE__ << " says: " << #x << " = " << (x) << endl
@@ -63,49 +62,46 @@ string to_str(T x)
 //
 //}
 
+
 int main()
 {
     optimizeIO();
 
-    int tc;
-    cin>>tc;
+    int n;
+    cin>>n;
 
-    while(tc--)
+    vector<PII> odd;
+    vector<int>ans(n+1);
+
+    for(int i=1; i<=n; i++)
     {
-        int n;
-        cin>>n;
+        int x;
+        cin>>x;
 
-        vector<int>v(n);
-
-        int od = 0, ev = 0;
-
-        for(int i=0; i<n; i++)
-        {
-            cin>>v[i];
-
-            if(v[i]&1)
-                od ++;
-            else
-                ev++;
-        }
-
-        if(ev%2==0 && od%2==0)
-        {
-            cout<<"YES"<<endl;
-            continue;
-        }
-
-        bool ok = false;
-
-        for(int i=0; i<n; i++)
-            for(int j=0; j<n; j++)
-                if(abs(v[i]-v[j])==1)
-                    ok = true;
-
-        if(ok) cout<<"YES"<<endl;
-        else cout<<"NO"<<endl;
-
+        if(abs(x)%2==1)
+            odd.push_back({x,i});
+        else
+            ans[i] = x/2;
     }
+
+
+
+    for(int i=0; i<odd.size(); i++)
+    {
+        int val = odd[i].F;
+        int id = odd[i].S;
+        double vv = val/2.0;
+
+        if(i&1)
+            vv -= 0.5;
+        else
+            vv += 0.5;
+
+        ans[id] = (int)vv;
+    }
+
+    for(int i=1; i<=n; i++)
+        cout<<ans[i]<<endl;
 
     return 0;
 }
@@ -143,3 +139,5 @@ ostream &operator <<(ostream &os, set<T>&v)
     os<<" ]";
     return os;
 }
+
+

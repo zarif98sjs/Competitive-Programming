@@ -1,4 +1,3 @@
-
 /** Which of the favors of your Lord will you deny ? **/
 
 #include<bits/stdc++.h>
@@ -10,7 +9,6 @@ using namespace std;
 #define MP make_pair
 #define F first
 #define S second
-#define INF INT_MAX
 
 #define ALL(x) (x).begin(), (x).end()
 #define DBG(x) cerr << __LINE__ << " says: " << #x << " = " << (x) << endl
@@ -63,56 +61,43 @@ string to_str(T x)
 //
 //}
 
-int ara[nmax];
-
 int main()
 {
-    //freopen("out.txt","w",stdout);
-
     optimizeIO();
 
     int n;
     cin>>n;
 
-    for(int i=1;i<=n;i++)
-        cin>>ara[i] ,ara[n+i] = ara[i];
+    vector<int>v(3*n);
 
-    int s,f;
-    cin>>s>>f;
+    for(int i=0;i<n;i++)
+        cin>>v[i] , v[i+n] = v[i+2*n] = v[i];
 
-    int k = f-s;
+    int p2 = 0;
 
-    int win = 0;
-    int mx = 0 , last , st,ans;
+    multiset<int>s;
+    vector<int>ans(n,0);
 
-    for(int i=1;i<=n+k;i++)
+    for(int i=0;i<n;i++)
     {
-        win += ara[i];
-
-        if(i>=k)
+        while(p2<i+2*n && (s.empty() ||  v[p2]>=(*s.rbegin()+1)/2 ))
         {
-            if(win>mx)
-            {
-                mx = win;
-                last = i;
-                st = last-k+1;
-                ans  = s - (st-1);
-                if(ans<=0) ans += n;
-            }
-            if(win==mx)
-            {
-                last = i;
-                st = last-k+1;
-                int temp  = s - (st-1);
-                if(temp<=0) temp += n;
-
-                ans = min(ans,temp);
-            }
-            win -= ara[i-k+1];
+            s.insert(v[p2]);
+            p2++;
         }
+
+        ans[i] = p2 - i;
+
+        s.erase(s.find(v[i]));
     }
 
-    cout<<ans<<endl;
+    for(int x:ans)
+    {
+        if(x==2*n) cout<<-1<<" ";
+        else cout<<x<<" ";
+    }
+
+    cout<<endl;
 
     return 0;
 }
@@ -150,5 +135,3 @@ ostream &operator <<(ostream &os, set<T>&v)
     os<<" ]";
     return os;
 }
-
-
