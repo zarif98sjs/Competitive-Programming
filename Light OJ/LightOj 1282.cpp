@@ -1,5 +1,5 @@
 
-/*Which of the favors of your Lord will you deny ?*/
+/** Which of the favors of your Lord will you deny ? **/
 
 #include<bits/stdc++.h>
 using namespace std;
