@@ -11,14 +11,9 @@ using namespace std;
 #define S second
 
 #define ALL(x)      (x).begin(), (x).end()
+#define DBG(x)      cout << __LINE__ << " says: " << #x << " = " << (x) << endl
 #define READ        freopen("alu.txt", "r", stdin)
 #define WRITE       freopen("vorta.txt", "w", stdout)
-
-#ifndef ONLINE_JUDGE
-#define DBG(x)      cout << __LINE__ << " says: " << #x << " = " << (x) << endl
-#else
-#define DBG(x)
-#endif
 
 template<class T1, class T2>
 ostream &operator <<(ostream &os, pair<T1,T2>&p);
@@ -35,17 +30,61 @@ inline void optimizeIO()
 
 const int nmax = 2e5+7;
 
+vector<int>d[nmax];
+
 int main()
 {
     optimizeIO();
 
-    int tc;
-    cin>>tc;
+    int n,k;
+    cin>>n>>k;
 
-    while(tc--)
+    for(int i=1;i<=n;i++)
     {
+        int x;
+        cin>>x;
 
+        d[x].push_back(i);
     }
+
+    if(d[0].size()>1)
+    {
+        cout<<-1<<endl;
+        return 0;
+    }
+
+    vector<PII>edge;
+
+    for(int i=0;i<n;i++)
+    {
+        int cur = 0;
+
+        for(int x:d[i])
+        {
+            int cnt;
+
+            if(i==0) cnt = k;
+            else cnt = k-1;
+
+            for(int j=0;j<cnt && cur<d[i+1].size();j++)
+            {
+                PII p = {x,d[i+1][cur]};
+                edge.push_back(p) , cur++;
+//                DBG(p);
+            }
+        }
+
+        if(cur!=(int)d[i+1].size())
+        {
+            cout<<-1<<endl;
+            return 0;
+        }
+    }
+
+    cout<<(int)edge.size()<<endl;
+
+    for(auto x:edge)
+        cout<<x.F<<" "<<x.S<<endl;
 
     return 0;
 }

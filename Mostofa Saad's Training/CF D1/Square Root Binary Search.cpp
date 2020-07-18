@@ -35,16 +35,30 @@ inline void optimizeIO()
 
 const int nmax = 2e5+7;
 
+LL sqroot(LL x)
+{
+    LL l = 0, r = 1e9 + 1;
+    while (l < r - 1)
+    {
+        LL m = (l + r) / 2;
+        if (m * m > x)
+            r = m;
+        else
+            l = m;
+    }
+    return l;
+}
+
 int main()
 {
     optimizeIO();
 
-    int tc;
-    cin>>tc;
-
-    while(tc--)
+    while(1)
     {
+        LL x;
+        cin>>x;
 
+        cout<<sqroot(x)<<endl;
     }
 
     return 0;

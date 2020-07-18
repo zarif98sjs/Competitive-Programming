@@ -4,7 +4,7 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-#define LL long long
+#define LL long long unsigned int
 #define PII pair<int,int>
 #define PLL pair<LL,LL>
 #define F first
@@ -34,23 +34,32 @@ inline void optimizeIO()
 }
 
 const int nmax = 2e5+7;
+const LL INF = 1e17;
 
+LL ara[nmax];
+
+//char s[1000010];
 int main()
 {
     optimizeIO();
 
-    int tc;
-    cin>>tc;
+    int n;
+    cin>>n;
 
-    while(tc--)
-    {
+    for(int i=1; i<=n; i++)
+        cin>>ara[i];
 
-    }
+    cout<<"Array :"<<endl;
+    for(int i=1; i<=n; i++)
+        cout<<ara[i]<<endl;
 
     return 0;
 }
 
 /**
+
+5
+1 2 3 4 5
 
 **/
 

@@ -35,16 +35,92 @@ inline void optimizeIO()
 
 const int nmax = 2e5+7;
 
+LL LOG(LL b,LL p)
+{
+    LL cnt = 0;
+
+    LL x = b;
+
+    while(x<=p)
+    {
+        x = x*b;
+        cnt++;
+    }
+
+    return cnt;
+}
+
+template <class T>
+T po(T b, T p) /// Faster than recursive one
+{
+    T res = 1, x = b;
+    while ( p ) {
+        if ( p & 1 ) res = ( res * x );
+        x = ( x * x );
+        p >>= 1;
+    }
+    return res;
+}
+
+bool isPerfectSquare(LL x)
+{
+  // Find floating point value of
+  // square root of x.
+  long double sr = sqrtl(x);
+
+  // If square root is an integer
+  return ((sr - floor(sr)) == 0);
+}
+
+vector<LL> precalc(LL n)
+{
+    set<LL>s;
+
+    for(LL i=2;i<=1e6;i++)
+    {
+        for(LL j=i*i*i; j<=n ;j*=i)
+        {
+            assert(j>=0);
+
+            if(!isPerfectSquare(j)) s.insert(j);
+
+            if(j>n/i) break;
+        }
+    }
+
+    vector<LL>v;
+
+    for(LL x:s)v.push_back(x);
+
+    return v;
+}
+
+LL query(LL x,vector<LL> &v)
+{
+    LL up = upper_bound(ALL(v),x) - v.begin();
+
+    LL perf_sq = sqrtl(x);
+
+    return up+perf_sq;
+}
+
+
 int main()
 {
     optimizeIO();
 
-    int tc;
-    cin>>tc;
+    vector<LL> v = precalc(1e18);
 
-    while(tc--)
+    int q;
+    cin>>q;
+
+    while(q--)
     {
+        LL l,r;
+        cin>>l>>r;
 
+        LL ans = query(r,v) - query(l-1,v);
+        cout<<ans<<endl;
     }
 
     return 0;
@@ -83,5 +159,3 @@ ostream &operator <<(ostream &os, set<T>&v)
     os<<" ]";
     return os;
 }
-
-

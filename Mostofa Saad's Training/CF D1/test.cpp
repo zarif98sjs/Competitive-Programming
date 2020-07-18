@@ -35,17 +35,21 @@ inline void optimizeIO()
 
 const int nmax = 2e5+7;
 
+LL ara[nmax];
+
 int main()
 {
     optimizeIO();
 
-    int tc;
-    cin>>tc;
+    int n;
+    cin>>n;
 
-    while(tc--)
-    {
+    for(int i=1; i<=n; i++)
+        cin>>ara[i];
 
-    }
+    cout<<"Array :"<<endl;
+    for(int i=1; i<=n; i++)
+        cout<<ara[i]<<endl;
 
     return 0;
 }

@@ -11,14 +11,9 @@ using namespace std;
 #define S second
 
 #define ALL(x)      (x).begin(), (x).end()
+#define DBG(x)      cout << __LINE__ << " says: " << #x << " = " << (x) << endl
 #define READ        freopen("alu.txt", "r", stdin)
 #define WRITE       freopen("vorta.txt", "w", stdout)
-
-#ifndef ONLINE_JUDGE
-#define DBG(x)      cout << __LINE__ << " says: " << #x << " = " << (x) << endl
-#else
-#define DBG(x)
-#endif
 
 template<class T1, class T2>
 ostream &operator <<(ostream &os, pair<T1,T2>&p);
@@ -35,17 +30,52 @@ inline void optimizeIO()
 
 const int nmax = 2e5+7;
 
+template <class T>
+T po(T b, T p) /// Faster than recursive one
+{
+    T res = 1, x = b;
+    while ( p ) {
+        if ( p & 1 ) res = ( res * x );
+        x = ( x * x );
+        p >>= 1;
+    }
+    return res;
+}
+
+map<LL,int>M1;
+map<LL,int>M2;
+
 int main()
 {
     optimizeIO();
 
-    int tc;
-    cin>>tc;
+    int n,m;
+    cin>>n>>m;
 
-    while(tc--)
+    for(int i=0;i<n;i++)
     {
-
+        LL x;
+        cin>>x;
+        M1[x]++;
     }
+
+    for(int i=0;i<m;i++)
+    {
+        LL x;
+        cin>>x;
+
+        LL val = po(2LL,x);
+        M2[val]++;
+    }
+
+    int ans = 0;
+
+    for(auto x:M2)
+    {
+        ans += min(M1[x.F],M2[x.F]);
+    }
+
+    cout<<ans<<endl;
 
     return 0;
 }
