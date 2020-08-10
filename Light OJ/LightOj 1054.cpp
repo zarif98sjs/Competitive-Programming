@@ -10,11 +10,11 @@ Idea
 Prime Factorization | Geometric Progression
 
 - Sum of Divisors of n can be calculated using Prime Factorization .
-- If n = p0^q0 + p1^q1 + ...  + pn^qn , Sum of Divisor = (p0^0 + p0^1 + ... + p0^q0) * ... (pn^0 + pn^1 + ... + pn^qn)
+- If n = p0^q0 * p1^q1 * ...  * pn^qn , Sum of Divisor = (p0^0 + p0^1 + ... + p0^q0) * ... (pn^0 + pn^1 + ... + pn^qn)
 - For a geometric progression , if first term is a and ration is r ,
   Sum of n terms , Sn = (a * (r^n - 1) ) / (r-1)
 
-- For n^m , prime factorization will be n = p0^(q0*m) + p1^(q1*m) + ...  + pn^(qn*m)
+- For n^m , prime factorization will be n^m = p0^(q0*m) * p1^(q1*m) * ...  * pn^(qn*m)
 - Rest of the implementation is trivial
 
 **/

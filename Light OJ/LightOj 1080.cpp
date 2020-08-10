@@ -50,8 +50,6 @@ int main()
         int ask;
         scanf("%d",&ask);
 
-        //cout<<"asked"<<endl;
-
         for(int j=1;j<=ask;j++)
         {
             char ch;
@@ -65,19 +63,12 @@ int main()
                 hi--;
                 update(lo,1,len);
                 update(hi+1,-1,len);
-
-                //for(int w=0;w<=len+10;w++)
-                  //  cout<<query(w);
-
-                    //printf("\n");
             }
             else if(ch=='Q')
             {
                 int qu;
                 scanf("%d",&qu);
                 qu--;
-
-                //cout<<"query(qu) "<<query(qu)<<endl;
 
                 if(query(qu)%2==1)
                 {
@@ -92,8 +83,6 @@ int main()
                 printf("\n");
 
             }
-
-            //cout<<j<<" "<<ask<<endl;
         }
 
     }

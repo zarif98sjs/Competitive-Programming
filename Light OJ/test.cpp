@@ -1,80 +1,163 @@
-/*
-    Author : RAJON BARDHAN
-    AUST CSE 27th Batch
-    All my programming success are dedicated to my mom , dad , little sister madhobi , teachers , friends and love TANIA SULTANA RIMY
 
-    Problem Name : 1064 - Throwing Dice ( LightOJ )
-    ALGORITHM : Probability + Dynamic Programming
-*/
+/**
 
-#include <bits/stdc++.h>
+Algorithm       : Calculating Prefix Function using KMP Algorithm
+Time Complexity : O(N)
+
+
+Definition:
+The prefix function for this string is defined as an array π of length n,
+where pi[i] is the length of the longest proper prefix of the substring s[0…i] which is also a suffix of this substring.
+A proper prefix of a string is a prefix that is not equal to the string itself. By definition, pi[0]=0.
+
+**/
+
+/** Which of the favors of your Lord will you deny ? **/
+
+#include<bits/stdc++.h>
 using namespace std;
 
-#define pb push_back
-#define ff first
-#define ss second
-#define mp make_pair
-#define memo(a,b) memset(a,b,sizeof(a))
-#define INF 1e9
-#define EPS 1e-8
-#define PI 3.14159265358979323846
+#define LL long long
+#define PII pair<int,int>
+#define PLL pair<LL,LL>
+#define MP make_pair
+#define F first
+#define S second
 
-typedef long long ll ;
-typedef unsigned long long ull ;
+#define ALL(x) (x).begin(), (x).end()
+#define DBG(x) cout << __LINE__ << " says: " << #x << " = " << (x) << endl
+#define READ        freopen("alu.txt", "r", stdin)
+#define WRITE       freopen("vorta.txt", "w", stdout)
 
-/* int dx[] = {1,-1,0,0} , dy[] = {0,0,1,-1}; */ // 4 Direction
-/* int dx[] = {1,-1,0,0,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1,1,-1}; */ // 8 Direction
-/* int dx[] = {1,-1,1,-1,2,2,-2,-2} , dy[] = {2,2,-2,-2,1,-1,1,-1}; */ // Knight Direction
-/* int dx[] = {2,-2,1,1,-1,-1} , dy[] = {0,0,1,-1,1,-1}; */ // Hexagonal Direction
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
 
-int n , x ;
-ll power[30] , dp[30][200] ;
+template<class TIn>using indexed_set = tree<TIn, null_type, less<TIn>,rb_tree_tag, tree_order_statistics_node_update>;
 
-void pre_process()
+/**
+
+PBDS
+-------------------------------------------------
+1) insert(value)
+2) erase(value)
+3) order_of_key(value) // 0 based indexing
+4) *find_by_order(position) // 0 based indexing
+
+**/
+
+template<class T1, class T2>
+ostream &operator <<(ostream &os, pair<T1,T2>&p);
+template <class T>
+ostream &operator <<(ostream &os, vector<T>&v);
+template <class T>
+ostream &operator <<(ostream &os, set<T>&v);
+
+inline void optimizeIO()
 {
-    power[0] = 1 ;
-    for(int i=1;i<=25;i++) power[i] = power[i-1]*(ll)6 ;
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
 }
 
-ll solve(int pos,int sum)
+const int nmax = 2e5+7;
+const LL LINF = 1e17;
+
+template <class T>
+string to_str(T x)
 {
-    if(pos>n)
+    stringstream ss;
+    ss<<x;
+    return ss.str();
+}
+
+//bool cmp(const PII &A,const PII &B)
+//{
+//
+//}
+
+vector<int> prefix_function(string s)
+{
+    int n = (int)s.length();
+    vector<int> pi(n);
+    for (int i = 1; i < n; i++)
     {
-        if(sum>=x) return 1 ;
-        else return 0 ;
+        int j = pi[i-1];
+        while (j > 0 && s[i] != s[j])
+            j = pi[j-1];
+        if (s[i] == s[j])
+            j++;
+        pi[i] = j;
     }
-    ll &ret = dp[pos][sum] ;
-    if(ret!=-1) return ret ;
-    ret = 0 ;
-    for(int i=1;i<=6;i++) ret+=solve(pos+1,sum+i);
-    return ret ;
+    return pi;
 }
 
 int main()
 {
-    //freopen("input.txt","r",stdin);
-    //freopen("output.txt","w",stdout);
+    optimizeIO();
 
-    pre_process();
-
-    int T ;
-    scanf("%d",&T);
-
-    for(int cas=1;cas<=T;cas++)
+    while(1)
     {
-        scanf("%d%d",&n,&x);
-        memo(dp,-1);
-        ll u = solve(1,0);
-        cout<<"U : "<<u<<endl;
-        ll v = power[n];
+        string s;
+        cin>>s;
 
-        ll gcd = __gcd(u,v);
-        u/=gcd ;
-        v/=gcd ;
+        int n = s.size();
 
-        cout << "Case " << cas << ": " << u ;
-        if(v!=1&&u!=0) cout << '/' << v ;
-        cout << endl ;
+        vector<int>pi = prefix_function(s);
+
+        cout<<pi<<endl;
+
+        vector<int> ans(n + 1);
+        for (int i = 0; i < n; i++)
+            ans[pi[i]]++;
+
+        cout<<ans<<endl;
+
+        for (int i = n-1; i > 0; i--)
+            ans[pi[i-1]] += ans[i];
+
+        cout<<ans<<endl;
+
+        for (int i = 0; i <= n; i++)
+            ans[i]++;
+
+
     }
+
     return 0;
 }
+
+/**
+
+**/
+
+template<class T1, class T2>
+ostream &operator <<(ostream &os, pair<T1,T2>&p)
+{
+    os<<"{"<<p.first<<", "<<p.second<<"} ";
+    return os;
+}
+template <class T>
+ostream &operator <<(ostream &os, vector<T>&v)
+{
+    os<<"[ ";
+    for(int i=0; i<v.size(); i++)
+    {
+        os<<v[i]<<" " ;
+    }
+    os<<" ]";
+    return os;
+}
+
+template <class T>
+ostream &operator <<(ostream &os, set<T>&v)
+{
+    os<<"[ ";
+    for(T i:v)
+    {
+        os<<i<<" ";
+    }
+    os<<" ]";
+    return os;
+}
+
+
