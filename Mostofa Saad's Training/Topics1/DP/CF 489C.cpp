@@ -33,72 +33,65 @@ inline void optimizeIO()
     cin.tie(NULL);
 }
 
-const int nmax = 2e5+7;
-
-int n;
-vector<int>num;
-vector<int>col;
-string c;
-
-int dp[55][5][55][2005];
-
-const int INF = 1e9;
-
-int solve(int pos,int prev_c,int prev_num,int k)
+template <class T>
+string to_str(T x)
 {
-    if(k<=0)
-        return 0;
-
-    if(pos<0 || pos==n)
-        return INF;
-
-//    cout<<"->"<<pos<<" "<<prev_c<<" "<<prev_num<<" "<<k<<endl;
-
-    int &ret = dp[pos][prev_c][prev_num][k];
-    if(ret != -1) return ret;
-
-//    cout<<pos<<" "<<prev_c<<" "<<prev_num<<" "<<k<<endl;
-
-    ret = INF;
-
-    if(col[pos] != prev_c && num[pos]>prev_num)
-    {
-        ret = min(ret,1 + solve(pos+1,col[pos],num[pos],k-num[pos]));
-        ret = min(ret,1 + solve(pos-1,col[pos],num[pos],k-num[pos]));
-    }
-
-    ret = min(ret,1 + solve(pos+1,prev_c,prev_num,k));
-    ret = min(ret,1 + solve(pos-1,prev_c,prev_num,k));
-
-    return ret;
+    stringstream ss;
+    ss<<x;
+    return ss.str();
 }
+
+
+const int nmax = 2e5+7;
 
 int main()
 {
     optimizeIO();
 
-    int st,k;
-    cin>>n>>st>>k;
+    int digit,sum;
+    cin>>digit>>sum;
 
-    num = vector<int>(n);
-
-    for(int i=0; i<n; i++)
-        cin>>num[i];
-
-    cin>>c;
-
-    for(char ch:c)
+    if(digit==1 && sum==0)
     {
-        if(ch=='R') col.push_back(0);
-        if(ch=='G') col.push_back(1);
-        if(ch=='B') col.push_back(2);
+        cout<<0<<" "<<0<<endl;
+        return 0;
     }
 
-    memset(dp,-1,sizeof dp);
-    int ans = solve(st-1,3,0,k);
+    int rem = sum;
 
-    if(ans>=INF) cout<<-1<<endl;
-    else cout<<ans-1<<endl;
+    string mx = "";
+
+    for(int i=0;i<digit;i++)
+    {
+        if(rem>9) mx += "9" , rem -= 9;
+        else mx += to_str(rem) , rem = 0;
+    }
+
+    if(mx[0]=='0' || rem!=0 ) cout<<-1 <<" "<<-1<<endl;
+    else
+    {
+        string mn = mx;
+        reverse(ALL(mn));
+
+        if(mn[0]=='0')
+        {
+            mn[0] = '1';
+
+            for(int i=1; i<(int)mn.size(); i++)
+            {
+                if(mn[i]!='0')
+                {
+                    mn[i] -= 1;
+                    break;
+                }
+            }
+        }
+
+        DBG(mx);
+        DBG(mn);
+
+        cout<<mn<<" "<<mx<<endl;
+    }
 
     return 0;
 }

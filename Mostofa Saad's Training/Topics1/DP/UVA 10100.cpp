@@ -35,41 +35,34 @@ inline void optimizeIO()
 
 const int nmax = 2e5+7;
 
-int n;
-vector<int>num;
-vector<int>col;
-string c;
+vector<string> v1 , v2;
 
-int dp[12][12][12][12];
-
-const int INF = 1e8;
-
-int solve(int pos,int prev_c,int prev_num,int k)
+void Process(string s,vector<string>&v)
 {
-    if(pos==-1 || pos==n || k<=0)
-    {
-        if(k<=0)
-            return 0;
-        return INF;
-    }
+    for(auto &ch:s)
+        if(!isalnum(ch))
+            ch = ' ';
 
-    int &ret = dp[pos][prev_c][prev_num][k];
+    v.clear();
+    stringstream ss(s);
+
+    while(ss>>s)
+        v.push_back(s);
+}
+
+int dp[1005][1005];
+
+int solve(int i,int j)
+{
+    if(i>=(int)v1.size() || j>=(int)v2.size())
+        return 0;
+
+    int &ret = dp[i][j];
     if(~ret) return ret;
 
-    ret = INF;
+    if(v1[i]==v2[j]) ret = 1 + solve(i+1,j+1);
+    else ret = max(solve(i,j+1) , solve(i+1,j));
 
-    int a  , b,  c , d;
-
-    if(col[pos] != prev_c && num[pos]>prev_num)
-    {
-        a = 1 + solve(pos+1,col[pos],num[pos],k-num[pos]);
-        b = 1 + solve(pos-1,col[pos],num[pos],k-num[pos]);
-    }
-
-    c = 1 + solve(pos+1,prev_c,prev_num,k);
-    d = 1 + solve(pos-1,prev_c,prev_num,k);
-
-    ret = min(min(a,b),min(c,d));
     return ret;
 }
 
@@ -77,34 +70,38 @@ int main()
 {
     optimizeIO();
 
-    int st,k;
-    cin>>n>>st>>k;
+    int cs = 0;
+    string s1,s2;
 
-    num = vector<int>(n);
-
-    for(int i=0; i<n; i++)
-        cin>>num[i];
-
-    cin>>c;
-
-    for(char ch:c)
+    while(getline(cin,s1))
     {
-        if(ch=='R') col.push_back(0);
-        if(ch=='G') col.push_back(1);
-        if(ch=='B') col.push_back(2);
+        getline(cin,s2);
+
+        if(s1.empty() || s2.empty())
+        {
+            printf("%2d. Blank!\n",++cs);
+            continue;
+        }
+
+        Process(s1,v1);
+        Process(s2,v2);
+
+        memset(dp,-1,sizeof dp);
+        int ans = solve(0,0);
+
+        printf("%2d. Length of longest match: %d\n",++cs,ans);
     }
-
-    memset(dp,-1,sizeof dp);
-    int ans = solve(st-1,3,0,k);
-    cout<<ans<<endl;
-
-    DBG(ans);
 
     return 0;
 }
 
 /**
+This is a test.
+test
+Hello!
 
+The document provides late-breaking information
+late breaking.
 **/
 
 template<class T1, class T2>

@@ -33,42 +33,26 @@ inline void optimizeIO()
     cin.tie(NULL);
 }
 
-const int nmax = 2e5+7;
+const int nmax = 1e5+7;
+const int INF = 2e9+7;
 
 int n;
-vector<int>num;
-vector<int>col;
-string c;
+vector<int>X,H;
+int dp[nmax];
 
-int dp[55][5][55][2005];
-
-const int INF = 1e9;
-
-int solve(int pos,int prev_c,int prev_num,int k)
+int solve(int pos,int prev_l)
 {
-    if(k<=0)
-        return 0;
+    if(pos==n) return 0;
 
-    if(pos<0 || pos==n)
-        return INF;
+    int &ret = dp[pos];
+    if(~ret) return ret;
 
-//    cout<<"->"<<pos<<" "<<prev_c<<" "<<prev_num<<" "<<k<<endl;
+    ret = 0;
 
-    int &ret = dp[pos][prev_c][prev_num][k];
-    if(ret != -1) return ret;
+    if(X[pos] - H[pos] > prev_l) ret = max(ret,1 + solve(pos+1,X[pos])); /** If left possible **/
 
-//    cout<<pos<<" "<<prev_c<<" "<<prev_num<<" "<<k<<endl;
-
-    ret = INF;
-
-    if(col[pos] != prev_c && num[pos]>prev_num)
-    {
-        ret = min(ret,1 + solve(pos+1,col[pos],num[pos],k-num[pos]));
-        ret = min(ret,1 + solve(pos-1,col[pos],num[pos],k-num[pos]));
-    }
-
-    ret = min(ret,1 + solve(pos+1,prev_c,prev_num,k));
-    ret = min(ret,1 + solve(pos-1,prev_c,prev_num,k));
+    if(X[pos] + H[pos] < X[pos+1]) ret = max(ret,1 + solve(pos+1,X[pos] + H[pos])); /** If right possible **/
+    else ret = max(ret,solve(pos+1,X[pos]));
 
     return ret;
 }
@@ -77,28 +61,20 @@ int main()
 {
     optimizeIO();
 
-    int st,k;
-    cin>>n>>st>>k;
+    cin>>n;
 
-    num = vector<int>(n);
+    X = vector<int>(n+1);
+    H = vector<int>(n+1);
 
-    for(int i=0; i<n; i++)
-        cin>>num[i];
+    for(int i=0;i<n;i++)
+        cin>>X[i]>>H[i];
 
-    cin>>c;
-
-    for(char ch:c)
-    {
-        if(ch=='R') col.push_back(0);
-        if(ch=='G') col.push_back(1);
-        if(ch=='B') col.push_back(2);
-    }
+    X[n] = INF;
 
     memset(dp,-1,sizeof dp);
-    int ans = solve(st-1,3,0,k);
-
-    if(ans>=INF) cout<<-1<<endl;
-    else cout<<ans-1<<endl;
+    int ans = solve(0,-INF);
+    DBG(ans);
+    cout<<ans<<endl;
 
     return 0;
 }

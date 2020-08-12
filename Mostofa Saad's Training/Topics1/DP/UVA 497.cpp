@@ -35,76 +35,85 @@ inline void optimizeIO()
 
 const int nmax = 2e5+7;
 
-int n;
-vector<int>num;
-vector<int>col;
-string c;
-
-int dp[55][5][55][2005];
-
-const int INF = 1e9;
-
-int solve(int pos,int prev_c,int prev_num,int k)
-{
-    if(k<=0)
-        return 0;
-
-    if(pos<0 || pos==n)
-        return INF;
-
-//    cout<<"->"<<pos<<" "<<prev_c<<" "<<prev_num<<" "<<k<<endl;
-
-    int &ret = dp[pos][prev_c][prev_num][k];
-    if(ret != -1) return ret;
-
-//    cout<<pos<<" "<<prev_c<<" "<<prev_num<<" "<<k<<endl;
-
-    ret = INF;
-
-    if(col[pos] != prev_c && num[pos]>prev_num)
-    {
-        ret = min(ret,1 + solve(pos+1,col[pos],num[pos],k-num[pos]));
-        ret = min(ret,1 + solve(pos-1,col[pos],num[pos],k-num[pos]));
-    }
-
-    ret = min(ret,1 + solve(pos+1,prev_c,prev_num,k));
-    ret = min(ret,1 + solve(pos-1,prev_c,prev_num,k));
-
-    return ret;
-}
-
 int main()
 {
     optimizeIO();
 
-    int st,k;
-    cin>>n>>st>>k;
+    int tc;
+    cin>>tc;
 
-    num = vector<int>(n);
+    cin.ignore();
+    cin.ignore();
 
-    for(int i=0; i<n; i++)
-        cin>>num[i];
-
-    cin>>c;
-
-    for(char ch:c)
+    while(tc--)
     {
-        if(ch=='R') col.push_back(0);
-        if(ch=='G') col.push_back(1);
-        if(ch=='B') col.push_back(2);
+        vector<int>v;
+        string s;
+        while (getline(cin, s) && s != "")
+        {
+            stringstream ss(s);
+            int val;
+
+            ss>>val;
+            v.push_back(val);
+        }
+
+        int n = v.size();
+
+        vector<int>dp(n,1); /** length of longest increasing sequence ending at i **/
+        vector<vector<int>>seq = vector<vector<int>>(n); /** longest increasing sequence ending at i **/
+
+        for(int i=0;i<n;i++)
+        {
+            for(int j=0;j<i;j++)
+            {
+                if(v[i] > v[j])
+                {
+                    if(dp[j]+1 > dp[i])
+                    {
+                        seq[i] = seq[j];
+                        dp[i] = dp[j]+1;
+                    }
+                }
+            }
+
+            seq[i].push_back(v[i]);
+            DBG(seq[i]);
+        }
+
+        DBG(dp);
+
+        int mx = 0;
+        vector<int>MX;
+
+        for(int i=0;i<n;i++)
+        {
+            if(dp[i]>mx)
+            {
+                mx = dp[i];
+                MX = seq[i];
+            }
+        }
+
+        cout<<"Max hits: "<<mx<<endl;
+        for(int x:MX)
+            cout<<x<<endl;
+
+        if(tc)
+            cout<<endl;
     }
-
-    memset(dp,-1,sizeof dp);
-    int ans = solve(st-1,3,0,k);
-
-    if(ans>=INF) cout<<-1<<endl;
-    else cout<<ans-1<<endl;
 
     return 0;
 }
 
 /**
+1
 
+1
+6
+2
+3
+5
 **/
 
 template<class T1, class T2>

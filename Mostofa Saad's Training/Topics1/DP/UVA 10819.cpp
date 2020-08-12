@@ -33,78 +33,61 @@ inline void optimizeIO()
     cin.tie(NULL);
 }
 
-const int nmax = 2e5+7;
+const int nmax = 1e4+7;
+const int MIN = -1e9;
 
-int n;
-vector<int>num;
-vector<int>col;
-string c;
+vector<int>p,f;
+int money,n;
+int dp[105][nmax];
 
-int dp[55][5][55][2005];
-
-const int INF = 1e9;
-
-int solve(int pos,int prev_c,int prev_num,int k)
+int solve(int pos,int P)
 {
-    if(k<=0)
-        return 0;
-
-    if(pos<0 || pos==n)
-        return INF;
-
-//    cout<<"->"<<pos<<" "<<prev_c<<" "<<prev_num<<" "<<k<<endl;
-
-    int &ret = dp[pos][prev_c][prev_num][k];
-    if(ret != -1) return ret;
-
-//    cout<<pos<<" "<<prev_c<<" "<<prev_num<<" "<<k<<endl;
-
-    ret = INF;
-
-    if(col[pos] != prev_c && num[pos]>prev_num)
+    if(pos==n)
     {
-        ret = min(ret,1 + solve(pos+1,col[pos],num[pos],k-num[pos]));
-        ret = min(ret,1 + solve(pos-1,col[pos],num[pos],k-num[pos]));
+        if(P>2000) P -= 200;
+
+        if(P<=money) return 0;
+        return MIN;
     }
 
-    ret = min(ret,1 + solve(pos+1,prev_c,prev_num,k));
-    ret = min(ret,1 + solve(pos-1,prev_c,prev_num,k));
+    if(P>=nmax) return MIN;
 
-    return ret;
+    int &ret = dp[pos][P];
+    if(~ret) return ret;
+
+    int inc = f[pos] + solve(pos+1,P + p[pos]);
+    int exc = solve(pos+1,P);
+
+    return ret = max(inc,exc);
 }
 
 int main()
 {
     optimizeIO();
 
-    int st,k;
-    cin>>n>>st>>k;
-
-    num = vector<int>(n);
-
-    for(int i=0; i<n; i++)
-        cin>>num[i];
-
-    cin>>c;
-
-    for(char ch:c)
+    while(cin>>money>>n)
     {
-        if(ch=='R') col.push_back(0);
-        if(ch=='G') col.push_back(1);
-        if(ch=='B') col.push_back(2);
+        p = vector<int>(n);
+        f = vector<int>(n);
+
+        for(int i=0;i<n;i++)
+            cin>>p[i]>>f[i];
+
+        memset(dp,-1,sizeof dp);
+        int ans = solve(0,0);
+        DBG(ans);
+        cout<<ans<<"\n";
     }
-
-    memset(dp,-1,sizeof dp);
-    int ans = solve(st-1,3,0,k);
-
-    if(ans>=INF) cout<<-1<<endl;
-    else cout<<ans-1<<endl;
 
     return 0;
 }
 
 /**
-
+500 4
+100 2
+100 3
+200 3
+400 4
 **/
 
 template<class T1, class T2>

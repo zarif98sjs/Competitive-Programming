@@ -33,42 +33,29 @@ inline void optimizeIO()
     cin.tie(NULL);
 }
 
-const int nmax = 2e5+7;
+const int nmax = 1e3+7;
+const int INF= 1e9;
 
-int n;
-vector<int>num;
-vector<int>col;
-string c;
+string s;
 
-int dp[55][5][55][2005];
+int dp[nmax][nmax];
 
-const int INF = 1e9;
-
-int solve(int pos,int prev_c,int prev_num,int k)
+int solve(int i,int j)
 {
-    if(k<=0)
-        return 0;
+    if(i>j) return 0;
 
-    if(pos<0 || pos==n)
-        return INF;
-
-//    cout<<"->"<<pos<<" "<<prev_c<<" "<<prev_num<<" "<<k<<endl;
-
-    int &ret = dp[pos][prev_c][prev_num][k];
-    if(ret != -1) return ret;
-
-//    cout<<pos<<" "<<prev_c<<" "<<prev_num<<" "<<k<<endl;
+    int &ret = dp[i][j];
+    if(~ret) return ret;
 
     ret = INF;
 
-    if(col[pos] != prev_c && num[pos]>prev_num)
+    if(s[i]==s[j]) ret = solve(i+1,j-1);
+    else
     {
-        ret = min(ret,1 + solve(pos+1,col[pos],num[pos],k-num[pos]));
-        ret = min(ret,1 + solve(pos-1,col[pos],num[pos],k-num[pos]));
+        ret = min(ret,1 + solve(i+1,j)); /// add to the right of j / remove i
+        ret = min(ret,1 + solve(i,j-1)); /// add to the left of i / remove j
+        ret = min(ret,1 + solve(i+1,j-1)); /// replace one
     }
-
-    ret = min(ret,1 + solve(pos+1,prev_c,prev_num,k));
-    ret = min(ret,1 + solve(pos-1,prev_c,prev_num,k));
 
     return ret;
 }
@@ -77,34 +64,34 @@ int main()
 {
     optimizeIO();
 
-    int st,k;
-    cin>>n>>st>>k;
+    int tc;
+    cin>>tc;
 
-    num = vector<int>(n);
+    int cs = 0;
 
-    for(int i=0; i<n; i++)
-        cin>>num[i];
-
-    cin>>c;
-
-    for(char ch:c)
+    while(tc--)
     {
-        if(ch=='R') col.push_back(0);
-        if(ch=='G') col.push_back(1);
-        if(ch=='B') col.push_back(2);
+        cin>>s;
+
+        int n = s.size();
+
+        memset(dp,-1,sizeof dp);
+        int ans = solve(0,n-1);
+
+        cout<<"Case "<<++cs<<": "<<ans<<endl;
     }
-
-    memset(dp,-1,sizeof dp);
-    int ans = solve(st-1,3,0,k);
-
-    if(ans>=INF) cout<<-1<<endl;
-    else cout<<ans-1<<endl;
 
     return 0;
 }
 
 /**
-
+6
+tanbirahmed
+shahriarmanzoor
+monirulhasan
+syedmonowarhossain
+sadrulhabibchowdhury
+mohammadsajjadhossain
 **/
 
 template<class T1, class T2>
