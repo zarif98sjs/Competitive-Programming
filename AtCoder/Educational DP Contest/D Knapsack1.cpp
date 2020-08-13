@@ -4,13 +4,14 @@
 F(i,W) = max( include ith item , exclude ith item )
 
 Here ,
-include ith item = F(i-1,W-w[i]) + v[i]
-exclude ith item = F(i-1,W)
+include ith item = F(i+1,W+w[i]) + v[i]
+exclude ith item = F(i+1,W)
 
 Base case:
 
-F(i,W<0)     = INT_MIN
-F(i<=0,W==0) = 0
+F(i,W>MAX_WEIGHT)     = INT_MIN
+F(i>n,W<=MAX_WIGHT)   = 0
+F(i>n,W>MAX_WIGHT)    = INT_MIN
 
 **/
 
@@ -73,28 +74,26 @@ string to_str(T x)
     return ss.str();
 }
 
-//bool cmp(const PII &A,const PII &B)
-//{
-//
-//}
+int n,MAX_WEIGHT;
 
 LL w[nmax];
 LL v[nmax];
-
 LL dp[nmax][nmax2];
 
 LL solve(int pos,int W) /** maximum value to get using maximum weight W **/
 {
-    if(W<0) return INT_MIN; /** if anytime W<0 , not possible **/
-    if(W==0) return 0; /** if anytime W=0 , OK . return 0 **/
+    if(W>MAX_WEIGHT) return INT_MIN; /** if anytime W>MAX_HEIGHT , not possible . This is used just to avoid RTE **/
 
-    if(pos==0 && W>0) return 0; /** Done with n items , still W left , OK . return 0 **/
+    if(pos>n) /** Done with n items and now check condition **/
+    {
+        return W<=MAX_WEIGHT ? 0 : INT_MIN;
+    }
 
     LL &ret = dp[pos][W];
     if(ret!=-1) return ret;
 
-    LL inc = solve(pos-1,W-w[pos]) + v[pos];
-    LL exc = solve(pos-1,W);
+    LL inc = solve(pos+1,W+w[pos]) + v[pos];
+    LL exc = solve(pos+1,W);
 
     return ret = max(inc,exc);
 }
@@ -103,15 +102,14 @@ int main()
 {
     optimizeIO();
 
-    int n,W;
-    cin>>n>>W;
+    cin>>n>>MAX_WEIGHT;
 
     for(int i=1;i<=n;i++)
         cin>>w[i]>>v[i];
 
     memset(dp,-1,sizeof dp);
 
-    cout<<solve(n,W)<<endl;
+    cout<<solve(0,0)<<endl;
 
     return 0;
 }
@@ -149,5 +147,3 @@ ostream &operator <<(ostream &os, set<T>&v)
     os<<" ]";
     return os;
 }
-
-
