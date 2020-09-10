@@ -1,10 +1,4 @@
 
-/**
-
-Diameter of a Tree (using BFS)
-
-**/
-
 /** Which of the favors of your Lord will you deny ? **/
 
 #include<bits/stdc++.h>
@@ -24,6 +18,7 @@ using namespace std;
 #define DBG(x)      cout << __LINE__ << " says: " << #x << " = " << (x) << endl
 #else
 #define DBG(x)
+#define endl "\n"
 #endif
 
 template<class T1, class T2>
@@ -41,75 +36,39 @@ inline void optimizeIO()
 
 const int nmax = 2e5+7;
 
-vector<int>adj[nmax];
-
-PII bfs(int s,int n)
+vector<int> compress(vector<int> &v) /// compress v to [1,max distinct number range]
 {
-    vector<bool>vis(n+1,false);
-    vector<int>d(n+1,0);
+    vector<int>c = v;
+    map<int,int>m;
 
-    queue<int>q;
-    vis[s] = true;
-    d[s] = 0;
-    q.push(s);
+    for(int x:c) m[x] = 1;
 
-    while(!q.empty())
-    {
-        int now = q.front();
-        q.pop();
+    int val = 0;
+    for(auto x:m) m[x.F] = ++val;
 
-        for(int next:adj[now])
-        {
-            if(!vis[next])
-            {
-                vis[next] = true;
-                d[next] = d[now] + 1;
-                q.push(next);
-            }
-        }
-    }
+    for(int &x:c) x = m[x];
 
-    int mx = 0 , mx_id = -1;
-
-    for(int i=1;i<=n;i++)
-    {
-        if(d[i]>mx)
-        {
-            mx = d[i];
-            mx_id = i;
-        }
-    }
-
-    return {mx,mx_id};
-}
-
-int diameter(int n)
-{
-    PII a  = bfs(1,n);
-    PII b  = bfs(a.S,n);
-
-    return b.F;
+    return c;
 }
 
 int main()
 {
     optimizeIO();
 
-    int n;
-    cin>>n;
+    int tc;
+    cin>>tc;
 
-    for(int i=1;i<n;i++)
+    while(tc--)
     {
-        int a,b;
-        cin>>a>>b;
+        int n;
+        cin>>n;
 
-        adj[a].push_back(b);
-        adj[b].push_back(a);
+        vector<int>v(n);
+        for(int i=0;i<n;i++) cin>>v[i];
+
+        vector<int>compressed = compress(v);
+        DBG(compressed);
     }
-
-
-    cout<<diameter(n)<<endl;
-
 
     return 0;
 }
@@ -128,9 +87,9 @@ template <class T>
 ostream &operator <<(ostream &os, vector<T>&v)
 {
     os<<"[ ";
-    for(int i=0; i<v.size(); i++)
+    for(T i:v)
     {
-        os<<v[i]<<" " ;
+        os<<i<<" " ;
     }
     os<<" ]";
     return os;
@@ -147,5 +106,3 @@ ostream &operator <<(ostream &os, set<T>&v)
     os<<" ]";
     return os;
 }
-
-

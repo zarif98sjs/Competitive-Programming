@@ -82,8 +82,8 @@ T bm(T b, T p, T m ) /// Faster than recursive one
     while ( p )
     {
         if ( p & 1 )
-            res = ( res * x ) % m;
-        x = ( x * x ) % m;
+            res = ( 1LL * res * x ) % m;
+        x = ( 1LL* x * x ) % m;
         p >>= 1;
     }
     return res;

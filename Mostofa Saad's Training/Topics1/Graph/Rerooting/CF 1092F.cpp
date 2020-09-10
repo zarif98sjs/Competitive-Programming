@@ -1,7 +1,8 @@
 
 /**
 
-Diameter of a Tree (using BFS)
+s(u) = v(u) + Summation all s(child)
+dp(u) = Summation all [ dp(child) + s(child) ]
 
 **/
 
@@ -24,6 +25,7 @@ using namespace std;
 #define DBG(x)      cout << __LINE__ << " says: " << #x << " = " << (x) << endl
 #else
 #define DBG(x)
+#define endl "\n"
 #endif
 
 template<class T1, class T2>
@@ -41,62 +43,96 @@ inline void optimizeIO()
 
 const int nmax = 2e5+7;
 
-vector<int>adj[nmax];
+#define int long long
 
-PII bfs(int s,int n)
+vector<vector<int>>adj;
+
+vector<int>v;
+vector<int>dp;
+vector<int>s;
+
+int ans = 0;
+
+void init_s(int u,int p)
 {
-    vector<bool>vis(n+1,false);
-    vector<int>d(n+1,0);
+    s[u] = v[u];
 
-    queue<int>q;
-    vis[s] = true;
-    d[s] = 0;
-    q.push(s);
-
-    while(!q.empty())
+    for(int v:adj[u])
     {
-        int now = q.front();
-        q.pop();
-
-        for(int next:adj[now])
+        if(v!=p)
         {
-            if(!vis[next])
-            {
-                vis[next] = true;
-                d[next] = d[now] + 1;
-                q.push(next);
-            }
+            init_s(v,u);
+
+            s[u] += s[v];
         }
     }
+}
 
-    int mx = 0 , mx_id = -1;
+void init_dp(int u,int p)
+{
+    dp[u] = 0;
 
-    for(int i=1;i<=n;i++)
+    for(int v:adj[u])
     {
-        if(d[i]>mx)
+        if(v!=p)
         {
-            mx = d[i];
-            mx_id = i;
+            init_dp(v,u);
+
+            dp[u] += dp[v];
+            dp[u] += s[v];
         }
     }
-
-    return {mx,mx_id};
 }
 
-int diameter(int n)
+void change_root(int old_root,int new_root)
 {
-    PII a  = bfs(1,n);
-    PII b  = bfs(a.S,n);
+    /// removing new root's contribution
+    s[old_root] -= s[new_root];
+    dp[old_root] -= s[new_root];
+    dp[old_root] -= dp[new_root];
 
-    return b.F;
+    /// adding old root as a child of new root
+    s[new_root] += s[old_root];
+    dp[new_root] += s[old_root];
+    dp[new_root] += dp[old_root];
 }
 
-int main()
+void dfs(int u,int p)
+{
+    ans = max(ans,dp[u]);
+
+    for(int v:adj[u])
+    {
+        if(v!=p)
+        {
+            change_root(u,v);
+
+            dfs(v,u);
+
+            change_root(v,u);
+        }
+    }
+}
+
+void INIT(int len)
+{
+    adj = vector<vector<int>>(len);
+    dp = vector<int>(len,0);
+    s = vector<int>(len,0);
+    v = vector<int>(len,0);
+}
+
+int32_t main()
 {
     optimizeIO();
 
     int n;
     cin>>n;
+
+    INIT(n+1);
+
+    for(int i=1;i<=n;i++)
+        cin>>v[i];
 
     for(int i=1;i<n;i++)
     {
@@ -107,15 +143,25 @@ int main()
         adj[b].push_back(a);
     }
 
-
-    cout<<diameter(n)<<endl;
-
+    init_s(1,-1);
+    DBG(s);
+    init_dp(1,-1);
+    DBG(dp);
+    dfs(1,-1);
+    cout<<ans<<endl;
+    DBG(ans);
 
     return 0;
 }
 
 /**
-
+6
+5 2 3 3 2 4
+1 2
+2 3
+2 4
+3 5
+3 6
 **/
 
 template<class T1, class T2>

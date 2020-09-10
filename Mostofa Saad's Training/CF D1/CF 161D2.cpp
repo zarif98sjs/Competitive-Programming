@@ -1,10 +1,4 @@
 
-/**
-
-Diameter of a Tree (using BFS)
-
-**/
-
 /** Which of the favors of your Lord will you deny ? **/
 
 #include<bits/stdc++.h>
@@ -24,6 +18,7 @@ using namespace std;
 #define DBG(x)      cout << __LINE__ << " says: " << #x << " = " << (x) << endl
 #else
 #define DBG(x)
+#define endl "\n"
 #endif
 
 template<class T1, class T2>
@@ -41,62 +36,44 @@ inline void optimizeIO()
 
 const int nmax = 2e5+7;
 
-vector<int>adj[nmax];
+#define int long long
 
-PII bfs(int s,int n)
+int n,k;
+vector<vector<int>>adj;
+vector<vector<int>>dp;
+
+int ans = 0;
+
+void dfs(int u,int p=-1)
 {
-    vector<bool>vis(n+1,false);
-    vector<int>d(n+1,0);
+    dp[u][0] = 1;
 
-    queue<int>q;
-    vis[s] = true;
-    d[s] = 0;
-    q.push(s);
-
-    while(!q.empty())
+    for(int v:adj[u])
     {
-        int now = q.front();
-        q.pop();
-
-        for(int next:adj[now])
+        if(v!=p)
         {
-            if(!vis[next])
-            {
-                vis[next] = true;
-                d[next] = d[now] + 1;
-                q.push(next);
-            }
+            dfs(v,u);
+
+            /// starts in ith level of u , ends in k-i th level of u i.e k-i-1 th level of v (excluding this subtree) 
+            for(int i=0;i<=k-1;i++) ans +=  dp[u][i] * dp[v][k-i-1];
+            for(int i=1;i<=k;i++) dp[u][i] += dp[v][i-1];
         }
     }
-
-    int mx = 0 , mx_id = -1;
-
-    for(int i=1;i<=n;i++)
-    {
-        if(d[i]>mx)
-        {
-            mx = d[i];
-            mx_id = i;
-        }
-    }
-
-    return {mx,mx_id};
 }
 
-int diameter(int n)
+void INIT(int len,int kk)
 {
-    PII a  = bfs(1,n);
-    PII b  = bfs(a.S,n);
-
-    return b.F;
+    adj = vector<vector<int>>(len);
+    dp = vector<vector<int>>(len,vector<int>(kk));
 }
 
-int main()
+int32_t main()
 {
     optimizeIO();
 
-    int n;
-    cin>>n;
+    cin>>n>>k;
+
+    INIT(n+1,k+1);
 
     for(int i=1;i<n;i++)
     {
@@ -107,15 +84,16 @@ int main()
         adj[b].push_back(a);
     }
 
+    dfs(1);
+    DBG(dp);
 
-    cout<<diameter(n)<<endl;
-
-
+    cout<<ans<<endl;
+    DBG(ans);
     return 0;
 }
 
 /**
-
+85 says: dp = [ [ 0 0 0  ] [ 1 1 2  ] [ 1 2 1  ] [ 1 1 0  ] [ 1 0 0  ] [ 1 0 0  ]  ]
 **/
 
 template<class T1, class T2>
@@ -128,9 +106,9 @@ template <class T>
 ostream &operator <<(ostream &os, vector<T>&v)
 {
     os<<"[ ";
-    for(int i=0; i<v.size(); i++)
+    for(T i:v)
     {
-        os<<v[i]<<" " ;
+        os<<i<<" " ;
     }
     os<<" ]";
     return os;

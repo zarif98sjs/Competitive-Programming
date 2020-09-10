@@ -1,10 +1,4 @@
 
-/**
-
-Diameter of a Tree (using BFS)
-
-**/
-
 /** Which of the favors of your Lord will you deny ? **/
 
 #include<bits/stdc++.h>
@@ -41,75 +35,55 @@ inline void optimizeIO()
 
 const int nmax = 2e5+7;
 
-vector<int>adj[nmax];
-
-PII bfs(int s,int n)
+template <class T>
+T po(T b, T p) /// Faster than recursive one
 {
-    vector<bool>vis(n+1,false);
-    vector<int>d(n+1,0);
-
-    queue<int>q;
-    vis[s] = true;
-    d[s] = 0;
-    q.push(s);
-
-    while(!q.empty())
+    T res = 1, x = b;
+    while ( p )
     {
-        int now = q.front();
-        q.pop();
-
-        for(int next:adj[now])
-        {
-            if(!vis[next])
-            {
-                vis[next] = true;
-                d[next] = d[now] + 1;
-                q.push(next);
-            }
-        }
+        if ( p & 1 )
+            res = ( res * x );
+        x = ( x * x );
+        p >>= 1;
     }
-
-    int mx = 0 , mx_id = -1;
-
-    for(int i=1;i<=n;i++)
-    {
-        if(d[i]>mx)
-        {
-            mx = d[i];
-            mx_id = i;
-        }
-    }
-
-    return {mx,mx_id};
+    return res;
 }
 
-int diameter(int n)
-{
-    PII a  = bfs(1,n);
-    PII b  = bfs(a.S,n);
+vector<LL>v;
 
-    return b.F;
+void generate()
+{
+    for(LL i=0;i<=40;i++)
+        v.push_back(po(3LL,i));
 }
 
 int main()
 {
     optimizeIO();
 
-    int n;
-    cin>>n;
+    generate();
 
-    for(int i=1;i<n;i++)
+    int tc;
+    cin>>tc;
+
+    while(tc--)
     {
-        int a,b;
-        cin>>a>>b;
+        LL n;
+        cin>>n;
+        bitset<40>mask(n);
 
-        adj[a].push_back(b);
-        adj[b].push_back(a);
+        vector<LL>ans;
+
+        for(int i=0;i<=40;i++)
+        {
+            if(mask[i]==1) ans.push_back(v[i]);
+        }
+
+        cout<<ans.size()<<"\n";
+        for(auto x:ans)
+            cout<<x<<" ";
+        cout<<"\n";
     }
-
-
-    cout<<diameter(n)<<endl;
-
 
     return 0;
 }

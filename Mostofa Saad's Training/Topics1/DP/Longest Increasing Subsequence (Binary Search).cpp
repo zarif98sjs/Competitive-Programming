@@ -1,8 +1,13 @@
 
 /**
 
-Diameter of a Tree (using BFS)
+Longest Increasing Subsequnce (Optimized using Binary Search)
+-----------------------------
 
+Complexity : O( NlogN )
+
+Details : https://cp-algorithms.com/sequences/longest_increasing_subsequence.html
+ 
 **/
 
 /** Which of the favors of your Lord will you deny ? **/
@@ -24,6 +29,7 @@ using namespace std;
 #define DBG(x)      cout << __LINE__ << " says: " << #x << " = " << (x) << endl
 #else
 #define DBG(x)
+#define endl "\n"
 #endif
 
 template<class T1, class T2>
@@ -40,55 +46,25 @@ inline void optimizeIO()
 }
 
 const int nmax = 2e5+7;
+const int INF = 1e9;
 
-vector<int>adj[nmax];
-
-PII bfs(int s,int n)
+int solveLIS(vector<int> &v)
 {
-    vector<bool>vis(n+1,false);
-    vector<int>d(n+1,0);
+    int n = v.size();
 
-    queue<int>q;
-    vis[s] = true;
-    d[s] = 0;
-    q.push(s);
+    vector<int>d(n+1,INF); /// d[i] = element at which subsequence of length i terminates
+    vector<int>LIS(n,1);
+    d[0] = -INF;
 
-    while(!q.empty())
+    for(int i=0;i<n;i++)
     {
-        int now = q.front();
-        q.pop();
+        int len = upper_bound(ALL(d),v[i]) - d.begin(); /// finding the one and only correct position of the current element
 
-        for(int next:adj[now])
-        {
-            if(!vis[next])
-            {
-                vis[next] = true;
-                d[next] = d[now] + 1;
-                q.push(next);
-            }
-        }
+        if(v[i] > d[len-1] && v[i] < d[len]) /// if greater than previous element and a better option
+            d[len] = v[i] , LIS[i] = len;
     }
 
-    int mx = 0 , mx_id = -1;
-
-    for(int i=1;i<=n;i++)
-    {
-        if(d[i]>mx)
-        {
-            mx = d[i];
-            mx_id = i;
-        }
-    }
-
-    return {mx,mx_id};
-}
-
-int diameter(int n)
-{
-    PII a  = bfs(1,n);
-    PII b  = bfs(a.S,n);
-
-    return b.F;
+    return *max_element(ALL(LIS));
 }
 
 int main()
@@ -98,24 +74,19 @@ int main()
     int n;
     cin>>n;
 
-    for(int i=1;i<n;i++)
-    {
-        int a,b;
-        cin>>a>>b;
+    vector<int>v(n);
+    for(int i=0;i<n;i++)
+        cin>>v[i];
 
-        adj[a].push_back(b);
-        adj[b].push_back(a);
-    }
-
-
-    cout<<diameter(n)<<endl;
-
+    int LIS_len = solveLIS(v);
+    cout<<LIS_len<<endl;
 
     return 0;
 }
 
 /**
-
+10
+1 2 3 4 5 4 3 2 1 10
 **/
 
 template<class T1, class T2>
@@ -128,9 +99,9 @@ template <class T>
 ostream &operator <<(ostream &os, vector<T>&v)
 {
     os<<"[ ";
-    for(int i=0; i<v.size(); i++)
+    for(T i:v)
     {
-        os<<v[i]<<" " ;
+        os<<i<<" " ;
     }
     os<<" ]";
     return os;

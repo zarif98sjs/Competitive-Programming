@@ -1,10 +1,4 @@
 
-/**
-
-Diameter of a Tree (using BFS)
-
-**/
-
 /** Which of the favors of your Lord will you deny ? **/
 
 #include<bits/stdc++.h>
@@ -41,75 +35,32 @@ inline void optimizeIO()
 
 const int nmax = 2e5+7;
 
-vector<int>adj[nmax];
-
-PII bfs(int s,int n)
-{
-    vector<bool>vis(n+1,false);
-    vector<int>d(n+1,0);
-
-    queue<int>q;
-    vis[s] = true;
-    d[s] = 0;
-    q.push(s);
-
-    while(!q.empty())
-    {
-        int now = q.front();
-        q.pop();
-
-        for(int next:adj[now])
-        {
-            if(!vis[next])
-            {
-                vis[next] = true;
-                d[next] = d[now] + 1;
-                q.push(next);
-            }
-        }
-    }
-
-    int mx = 0 , mx_id = -1;
-
-    for(int i=1;i<=n;i++)
-    {
-        if(d[i]>mx)
-        {
-            mx = d[i];
-            mx_id = i;
-        }
-    }
-
-    return {mx,mx_id};
-}
-
-int diameter(int n)
-{
-    PII a  = bfs(1,n);
-    PII b  = bfs(a.S,n);
-
-    return b.F;
-}
-
 int main()
 {
     optimizeIO();
 
-    int n;
-    cin>>n;
+    int tc;
+    cin>>tc;
 
-    for(int i=1;i<n;i++)
+    while(tc--)
     {
-        int a,b;
-        cin>>a>>b;
+        string s;
+        cin>>s;
 
-        adj[a].push_back(b);
-        adj[b].push_back(a);
+        int n = s.size();
+
+        int cnt = 1;
+
+        for(int i=1;i<n;i++)
+            if(s[i]==s[0]) cnt++;
+
+        if(cnt==n) cout<<-1<<"\n";
+        else
+        {
+            sort(ALL(s));
+            cout<<s<<"\n";
+        }
     }
-
-
-    cout<<diameter(n)<<endl;
-
 
     return 0;
 }

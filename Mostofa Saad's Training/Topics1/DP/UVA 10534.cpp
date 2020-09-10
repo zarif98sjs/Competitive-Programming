@@ -1,10 +1,4 @@
 
-/**
-
-Diameter of a Tree (using BFS)
-
-**/
-
 /** Which of the favors of your Lord will you deny ? **/
 
 #include<bits/stdc++.h>
@@ -24,6 +18,7 @@ using namespace std;
 #define DBG(x)      cout << __LINE__ << " says: " << #x << " = " << (x) << endl
 #else
 #define DBG(x)
+#define endl "\n"
 #endif
 
 template<class T1, class T2>
@@ -40,82 +35,83 @@ inline void optimizeIO()
 }
 
 const int nmax = 2e5+7;
+const int INF = 1e9;
 
-vector<int>adj[nmax];
-
-PII bfs(int s,int n)
+vector<int>solveLIS(vector<int> &v)
 {
-    vector<bool>vis(n+1,false);
-    vector<int>d(n+1,0);
+    int n = v.size();
 
-    queue<int>q;
-    vis[s] = true;
-    d[s] = 0;
-    q.push(s);
+    vector<int>d(n+1,INF);
+    vector<int>LIS(n,1);
+    d[0] = -INF;
 
-    while(!q.empty())
+    for(int i=0;i<n;i++)
     {
-        int now = q.front();
-        q.pop();
+        int len = upper_bound(ALL(d),v[i]) - d.begin();
 
-        for(int next:adj[now])
-        {
-            if(!vis[next])
-            {
-                vis[next] = true;
-                d[next] = d[now] + 1;
-                q.push(next);
-            }
-        }
+        if(v[i] > d[len-1] && v[i] < d[len])
+            d[len] = v[i] , LIS[i] = len;
     }
 
-    int mx = 0 , mx_id = -1;
+    // DBG(d);
+    // DBG(LIS);
 
-    for(int i=1;i<=n;i++)
-    {
-        if(d[i]>mx)
-        {
-            mx = d[i];
-            mx_id = i;
-        }
-    }
+    // int lis_len = 0;
+    // for(int i=1;i<=n;i++)
+    //     if(d[i]<INF)
+    //         lis_len = i;
 
-    return {mx,mx_id};
+    // DBG(lis_len);
+
+    return LIS;
 }
 
-int diameter(int n)
+int solve(vector<int> &v)
 {
-    PII a  = bfs(1,n);
-    PII b  = bfs(a.S,n);
+    int n = v.size();
 
-    return b.F;
+    vector<int>LIS = solveLIS(v);
+    // DBG(LIS);
+    reverse(ALL(v));
+    vector<int>LDS = solveLIS(v);
+    // DBG(LDS);
+
+    int ans = 0;
+    for(int i=0;i<n;i++)
+    {
+        int wavio = 2 * min(LIS[i],LDS[n-i-1]) - 1;
+        ans = max(ans,wavio);
+    }
+
+    return ans;
 }
 
 int main()
 {
     optimizeIO();
 
+    // WRITE;
+
     int n;
-    cin>>n;
 
-    for(int i=1;i<n;i++)
+    while(cin>>n)
     {
-        int a,b;
-        cin>>a>>b;
+        vector<int>v(n);
+        for(int i=0;i<n;i++)
+            cin>>v[i];
 
-        adj[a].push_back(b);
-        adj[b].push_back(a);
+        int longest_bitonic = solve(v);
+        cout<<longest_bitonic<<endl;
+        // DBG(longest_bitonic);
+    
     }
-
-
-    cout<<diameter(n)<<endl;
-
 
     return 0;
 }
 
 /**
-
+10
+1 2 3 4 5 4 3 2 1 10
 **/
 
 template<class T1, class T2>
@@ -128,9 +124,9 @@ template <class T>
 ostream &operator <<(ostream &os, vector<T>&v)
 {
     os<<"[ ";
-    for(int i=0; i<v.size(); i++)
+    for(T i:v)
     {
-        os<<v[i]<<" " ;
+        os<<i<<" " ;
     }
     os<<" ]";
     return os;

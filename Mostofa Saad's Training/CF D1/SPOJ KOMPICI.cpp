@@ -1,10 +1,22 @@
-
 /**
-
-Diameter of a Tree (using BFS)
-
-**/
-
+ * Logic:
+ * Create inverted index type stuff wherein all the numbers with similar digits are
+ * grouped together.
+ * Eg:
+ *
+ * consider numbers : 3,33,4,42,24,244,44
+ * Numbers that will be grouped together are
+ * 1 -> 3,33
+ * 2 -> 4,44
+ * 3 -> 24,42,244
+ *
+ * Group 2 and group3 will totally contribute 6 pairs
+ * Group 1 individually will contribute 1 pair	(1)
+ * Group 2 individually will contribute 1 pair	(1)
+ * Group 3 individually will contribute 3 pairs (2+1)
+ *
+ * Total pairs = 6 + 1 + 1 + 3 = 11
+ */
 /** Which of the favors of your Lord will you deny ? **/
 
 #include<bits/stdc++.h>
@@ -24,6 +36,7 @@ using namespace std;
 #define DBG(x)      cout << __LINE__ << " says: " << #x << " = " << (x) << endl
 #else
 #define DBG(x)
+#define endl "\n"
 #endif
 
 template<class T1, class T2>
@@ -41,75 +54,52 @@ inline void optimizeIO()
 
 const int nmax = 2e5+7;
 
-vector<int>adj[nmax];
+#define int long long 
 
-PII bfs(int s,int n)
-{
-    vector<bool>vis(n+1,false);
-    vector<int>d(n+1,0);
-
-    queue<int>q;
-    vis[s] = true;
-    d[s] = 0;
-    q.push(s);
-
-    while(!q.empty())
-    {
-        int now = q.front();
-        q.pop();
-
-        for(int next:adj[now])
-        {
-            if(!vis[next])
-            {
-                vis[next] = true;
-                d[next] = d[now] + 1;
-                q.push(next);
-            }
-        }
-    }
-
-    int mx = 0 , mx_id = -1;
-
-    for(int i=1;i<=n;i++)
-    {
-        if(d[i]>mx)
-        {
-            mx = d[i];
-            mx_id = i;
-        }
-    }
-
-    return {mx,mx_id};
-}
-
-int diameter(int n)
-{
-    PII a  = bfs(1,n);
-    PII b  = bfs(a.S,n);
-
-    return b.F;
-}
-
-int main()
+int32_t main()
 {
     optimizeIO();
 
     int n;
     cin>>n;
 
-    for(int i=1;i<n;i++)
-    {
-        int a,b;
-        cin>>a>>b;
+    vector<string>v(n);
 
-        adj[a].push_back(b);
-        adj[b].push_back(a);
+    for(int i=0;i<n;i++)
+        cin>>v[i];
+
+    vector<int> mask((1<<10) + 10,0);
+
+    for(string s:v)
+    {
+        int m = 0;
+        for(char ch:s)
+        {
+            int c = ch - '0';
+            m |= (1<<c);
+        }
+
+        mask[m]++;
     }
 
+    int ans = 0;
 
-    cout<<diameter(n)<<endl;
+    for(int i=0;i<(1<<10);i++)
+    {
+        int cnt = mask[i];
+        ans += (cnt*(cnt-1))/2;
+    }
 
+    for(int i=0;i<(1<<10);i++)
+    {
+        for(int j=i+1;j<(1<<10);j++)
+        {
+            if(i&j) ans += mask[i]*mask[j];
+        }
+    }
+
+    cout<<ans<<endl;
+    DBG(ans);
 
     return 0;
 }
@@ -128,9 +118,9 @@ template <class T>
 ostream &operator <<(ostream &os, vector<T>&v)
 {
     os<<"[ ";
-    for(int i=0; i<v.size(); i++)
+    for(T i:v)
     {
-        os<<v[i]<<" " ;
+        os<<i<<" " ;
     }
     os<<" ]";
     return os;

@@ -1,10 +1,4 @@
 
-/**
-
-Diameter of a Tree (using BFS)
-
-**/
-
 /** Which of the favors of your Lord will you deny ? **/
 
 #include<bits/stdc++.h>
@@ -24,6 +18,7 @@ using namespace std;
 #define DBG(x)      cout << __LINE__ << " says: " << #x << " = " << (x) << endl
 #else
 #define DBG(x)
+#define endl "\n"
 #endif
 
 template<class T1, class T2>
@@ -41,75 +36,31 @@ inline void optimizeIO()
 
 const int nmax = 2e5+7;
 
-vector<int>adj[nmax];
-
-PII bfs(int s,int n)
+template <class T>
+T bm(T b, T p, T m ) /// Faster than recursive one
 {
-    vector<bool>vis(n+1,false);
-    vector<int>d(n+1,0);
-
-    queue<int>q;
-    vis[s] = true;
-    d[s] = 0;
-    q.push(s);
-
-    while(!q.empty())
+    T res = 1 % m, x = b % m;
+    while ( p )
     {
-        int now = q.front();
-        q.pop();
-
-        for(int next:adj[now])
-        {
-            if(!vis[next])
-            {
-                vis[next] = true;
-                d[next] = d[now] + 1;
-                q.push(next);
-            }
-        }
+        if ( p & 1 )
+            res = ( res * x ) % m;
+        x = ( x * x ) % m;
+        p >>= 1;
     }
-
-    int mx = 0 , mx_id = -1;
-
-    for(int i=1;i<=n;i++)
-    {
-        if(d[i]>mx)
-        {
-            mx = d[i];
-            mx_id = i;
-        }
-    }
-
-    return {mx,mx_id};
-}
-
-int diameter(int n)
-{
-    PII a  = bfs(1,n);
-    PII b  = bfs(a.S,n);
-
-    return b.F;
+    return res;
 }
 
 int main()
 {
     optimizeIO();
 
-    int n;
-    cin>>n;
+    int tc;
+    cin>>tc;
 
-    for(int i=1;i<n;i++)
+    while(tc--)
     {
-        int a,b;
-        cin>>a>>b;
-
-        adj[a].push_back(b);
-        adj[b].push_back(a);
+        bm
     }
-
-
-    cout<<diameter(n)<<endl;
-
 
     return 0;
 }
@@ -128,9 +79,9 @@ template <class T>
 ostream &operator <<(ostream &os, vector<T>&v)
 {
     os<<"[ ";
-    for(int i=0; i<v.size(); i++)
+    for(T i:v)
     {
-        os<<v[i]<<" " ;
+        os<<i<<" " ;
     }
     os<<" ]";
     return os;
@@ -147,5 +98,3 @@ ostream &operator <<(ostream &os, set<T>&v)
     os<<" ]";
     return os;
 }
-
-

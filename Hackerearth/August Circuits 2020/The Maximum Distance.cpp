@@ -1,9 +1,6 @@
-
-/**
-
-Diameter of a Tree (using BFS)
-
-**/
+#pragma GCC optimize("Ofast")
+#pragma GCC optimize("unroll-loops")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,avx2,fma")
 
 /** Which of the favors of your Lord will you deny ? **/
 
@@ -41,75 +38,72 @@ inline void optimizeIO()
 
 const int nmax = 2e5+7;
 
-vector<int>adj[nmax];
+#define int long long
 
-PII bfs(int s,int n)
-{
-    vector<bool>vis(n+1,false);
-    vector<int>d(n+1,0);
-
-    queue<int>q;
-    vis[s] = true;
-    d[s] = 0;
-    q.push(s);
-
-    while(!q.empty())
-    {
-        int now = q.front();
-        q.pop();
-
-        for(int next:adj[now])
-        {
-            if(!vis[next])
-            {
-                vis[next] = true;
-                d[next] = d[now] + 1;
-                q.push(next);
-            }
-        }
-    }
-
-    int mx = 0 , mx_id = -1;
-
-    for(int i=1;i<=n;i++)
-    {
-        if(d[i]>mx)
-        {
-            mx = d[i];
-            mx_id = i;
-        }
-    }
-
-    return {mx,mx_id};
-}
-
-int diameter(int n)
-{
-    PII a  = bfs(1,n);
-    PII b  = bfs(a.S,n);
-
-    return b.F;
-}
-
-int main()
+int32_t main()
 {
     optimizeIO();
 
     int n;
     cin>>n;
 
-    for(int i=1;i<n;i++)
+    vector<int>v(n);
+
+    for(int i=0;i<n;i++) cin>>v[i];
+
+    int q;
+    cin>>q;
+    while(q--)
     {
-        int a,b;
-        cin>>a>>b;
+        int type;
+        cin>>type;
 
-        adj[a].push_back(b);
-        adj[b].push_back(a);
+        if(type==1)
+        {
+            int l,r,x;
+            cin>>l>>r>>x;
+            l--,r--;
+
+            for(int i=l;i<=r;i++)
+                v[i] += x;
+        }
+        if(type==2)
+        {
+            int l,r,x;
+            cin>>l>>r>>x;
+            l--,r--;
+
+            for(int i=l;i<=r;i++)
+                v[i] *= x;
+        }
+        if(type==3)
+        {
+            int val;
+            cin>>val;
+
+            vector<int>po;
+
+            for(int i=0;i<n;i++)
+            {
+                if(v[i]==val)
+                    po.push_back(i);
+            }
+
+            int sz = (int)po.size();
+
+            if(sz==0) cout<<-1<<endl;
+            else if(sz==1) cout<<1<<endl;
+            else
+            {
+                int mx = 0;
+
+                for(int i=1;i<sz;i++)
+                    mx = max(mx,po[i]-po[i-1]+1);
+
+                cout<<mx<<endl;
+            }
+        }
     }
-
-
-    cout<<diameter(n)<<endl;
-
 
     return 0;
 }
@@ -147,5 +141,3 @@ ostream &operator <<(ostream &os, set<T>&v)
     os<<" ]";
     return os;
 }
-
-

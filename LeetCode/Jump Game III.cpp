@@ -1,10 +1,4 @@
 
-/**
-
-Diameter of a Tree (using BFS)
-
-**/
-
 /** Which of the favors of your Lord will you deny ? **/
 
 #include<bits/stdc++.h>
@@ -39,76 +33,52 @@ inline void optimizeIO()
     cin.tie(NULL);
 }
 
-const int nmax = 2e5+7;
+const int nmax = 5e4+7;
 
-vector<int>adj[nmax];
+class Solution {
+public:
 
-PII bfs(int s,int n)
-{
-    vector<bool>vis(n+1,false);
-    vector<int>d(n+1,0);
+    int dp[nmax];
 
-    queue<int>q;
-    vis[s] = true;
-    d[s] = 0;
-    q.push(s);
-
-    while(!q.empty())
+    int solve(int pos,vector<int>&v)
     {
-        int now = q.front();
-        q.pop();
+        int n = v.size();
 
-        for(int next:adj[now])
-        {
-            if(!vis[next])
-            {
-                vis[next] = true;
-                d[next] = d[now] + 1;
-                q.push(next);
-            }
-        }
+        if(pos<0 || pos>n-1) return false;
+        if(v[pos]==0) return true;
+
+        int &ret = dp[pos];
+        if(ret != -1) return ret;
+
+        ret = false;
+
+        if(solve(pos-v[pos],v)) return ret = true;
+        if(solve(pos+v[pos],v)) return ret = true;
+
+        return ret = false;
     }
 
-    int mx = 0 , mx_id = -1;
-
-    for(int i=1;i<=n;i++)
-    {
-        if(d[i]>mx)
-        {
-            mx = d[i];
-            mx_id = i;
-        }
+    bool canReach(vector<int>& arr, int start) {
+        memset(dp,-1,sizeof dp);
+        return solve(start,arr);
     }
-
-    return {mx,mx_id};
-}
-
-int diameter(int n)
-{
-    PII a  = bfs(1,n);
-    PII b  = bfs(a.S,n);
-
-    return b.F;
-}
+};
 
 int main()
 {
     optimizeIO();
 
-    int n;
-    cin>>n;
+    int n , st;
+    cin>>n >>st;
 
-    for(int i=1;i<n;i++)
-    {
-        int a,b;
-        cin>>a>>b;
+    vector<int>v(n);
 
-        adj[a].push_back(b);
-        adj[b].push_back(a);
-    }
+    for(int i=0;i<n;i++) cin>>v[i];
 
+    Solution sol;
 
-    cout<<diameter(n)<<endl;
+    int ans = sol.canReach(v,st);
+    DBG(ans);
 
 
     return 0;
@@ -116,6 +86,14 @@ int main()
 
 /**
 
+7 5
+4 2 3 0 3 1 2
+
+5 2
+3 0 2 1 2
+
+[4,2,3,0,3,1,2], start = 5
+[3,0,2,1,2], start = 2
 **/
 
 template<class T1, class T2>

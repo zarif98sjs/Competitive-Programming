@@ -1,10 +1,4 @@
 
-/**
-
-Diameter of a Tree (using BFS)
-
-**/
-
 /** Which of the favors of your Lord will you deny ? **/
 
 #include<bits/stdc++.h>
@@ -24,6 +18,7 @@ using namespace std;
 #define DBG(x)      cout << __LINE__ << " says: " << #x << " = " << (x) << endl
 #else
 #define DBG(x)
+#define endl "\n"
 #endif
 
 template<class T1, class T2>
@@ -39,83 +34,66 @@ inline void optimizeIO()
     cin.tie(NULL);
 }
 
-const int nmax = 2e5+7;
+const int nmax = 1e5+7;
+const int INF = 1e9;
 
-vector<int>adj[nmax];
-
-PII bfs(int s,int n)
+int solve(vector<int> &v)
 {
-    vector<bool>vis(n+1,false);
-    vector<int>d(n+1,0);
+    vector<int>dp(nmax);
 
-    queue<int>q;
-    vis[s] = true;
-    d[s] = 0;
-    q.push(s);
+    int ans = 0;
 
-    while(!q.empty())
-    {
-        int now = q.front();
-        q.pop();
+    for(int num:v)
+    {   
+        dp[num] = 1;
 
-        for(int next:adj[now])
+        vector<int>div;
+
+        for(int i=2;i*i<=num;i++)
         {
-            if(!vis[next])
+            if(num%i==0)
             {
-                vis[next] = true;
-                d[next] = d[now] + 1;
-                q.push(next);
+                div.push_back(i);
+                if(i!=(num/i)) div.push_back(num/i);
             }
         }
+
+        for(int d:div) dp[num] = max(dp[num],dp[d]+1);
+        for(int d:div) dp[d] = dp[num]; // can do this as the numbers are sorted
+
+        DBG(dp[num]);
+        ans = max(ans,dp[num]);
+
+        // for(int x:v) cout<<x<<" : "<<dp[x]<<endl;
     }
 
-    int mx = 0 , mx_id = -1;
+    DBG(ans);
 
-    for(int i=1;i<=n;i++)
-    {
-        if(d[i]>mx)
-        {
-            mx = d[i];
-            mx_id = i;
-        }
-    }
-
-    return {mx,mx_id};
-}
-
-int diameter(int n)
-{
-    PII a  = bfs(1,n);
-    PII b  = bfs(a.S,n);
-
-    return b.F;
+    return ans;
 }
 
 int main()
 {
     optimizeIO();
 
+    // WRITE;
+
     int n;
     cin>>n;
+    vector<int>v(n);
+    for(int i=0;i<n;i++)
+        cin>>v[i];
 
-    for(int i=1;i<n;i++)
-    {
-        int a,b;
-        cin>>a>>b;
-
-        adj[a].push_back(b);
-        adj[b].push_back(a);
-    }
-
-
-    cout<<diameter(n)<<endl;
-
+    int ans = solve(v);
+    cout<<ans<<endl;
+    
 
     return 0;
 }
 
 /**
-
+10
+1 2 3 4 5 4 3 2 1 10
 **/
 
 template<class T1, class T2>
@@ -128,9 +106,9 @@ template <class T>
 ostream &operator <<(ostream &os, vector<T>&v)
 {
     os<<"[ ";
-    for(int i=0; i<v.size(); i++)
+    for(T i:v)
     {
-        os<<v[i]<<" " ;
+        os<<i<<" " ;
     }
     os<<" ]";
     return os;

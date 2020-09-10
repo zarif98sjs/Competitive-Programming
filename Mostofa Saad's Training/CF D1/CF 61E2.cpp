@@ -1,10 +1,4 @@
 
-/**
-
-Diameter of a Tree (using BFS)
-
-**/
-
 /** Which of the favors of your Lord will you deny ? **/
 
 #include<bits/stdc++.h>
@@ -24,6 +18,7 @@ using namespace std;
 #define DBG(x)      cout << __LINE__ << " says: " << #x << " = " << (x) << endl
 #else
 #define DBG(x)
+#define endl "\n"
 #endif
 
 template<class T1, class T2>
@@ -39,77 +34,60 @@ inline void optimizeIO()
     cin.tie(NULL);
 }
 
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+
+template<class TIn>using indexed_set = tree<TIn, null_type, less<TIn>,rb_tree_tag, tree_order_statistics_node_update>;
+
 const int nmax = 2e5+7;
 
-vector<int>adj[nmax];
+#define int long long 
 
-PII bfs(int s,int n)
-{
-    vector<bool>vis(n+1,false);
-    vector<int>d(n+1,0);
-
-    queue<int>q;
-    vis[s] = true;
-    d[s] = 0;
-    q.push(s);
-
-    while(!q.empty())
-    {
-        int now = q.front();
-        q.pop();
-
-        for(int next:adj[now])
-        {
-            if(!vis[next])
-            {
-                vis[next] = true;
-                d[next] = d[now] + 1;
-                q.push(next);
-            }
-        }
-    }
-
-    int mx = 0 , mx_id = -1;
-
-    for(int i=1;i<=n;i++)
-    {
-        if(d[i]>mx)
-        {
-            mx = d[i];
-            mx_id = i;
-        }
-    }
-
-    return {mx,mx_id};
-}
-
-int diameter(int n)
-{
-    PII a  = bfs(1,n);
-    PII b  = bfs(a.S,n);
-
-    return b.F;
-}
-
-int main()
+int32_t main()
 {
     optimizeIO();
 
     int n;
     cin>>n;
 
+    vector<int>v(n);
+
+    for(int i=0;i<n;i++)
+        cin>>v[i];
+
+    vector<int>large(n,0),small(n,0);
+    indexed_set<int>st;
+
+    st.insert(v[0]);
     for(int i=1;i<n;i++)
     {
-        int a,b;
-        cin>>a>>b;
+        int l = 0;
+        int r = i-1;
 
-        adj[a].push_back(b);
-        adj[b].push_back(a);
+        int cnt = r-l+1 - st.order_of_key(v[i]);
+        large[i] = cnt;
+
+        st.insert(v[i]);
+    }
+    st.clear();
+
+    st.insert(v[n-1]);
+    for(int i=n-2;i>=0;i--)
+    {
+        int cnt = st.order_of_key(v[i]);
+        small[i] = cnt;
+        st.insert(v[i]);
     }
 
+    DBG(large);
+    DBG(small);
 
-    cout<<diameter(n)<<endl;
+    int ans = 0;
+    for(int i=0;i<n;i++)
+        ans += large[i]*small[i];
 
+    cout<<ans<<endl;
 
     return 0;
 }
@@ -128,9 +106,9 @@ template <class T>
 ostream &operator <<(ostream &os, vector<T>&v)
 {
     os<<"[ ";
-    for(int i=0; i<v.size(); i++)
+    for(T i:v)
     {
-        os<<v[i]<<" " ;
+        os<<i<<" " ;
     }
     os<<" ]";
     return os;

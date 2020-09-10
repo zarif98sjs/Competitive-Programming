@@ -1,7 +1,7 @@
 
 /**
 
-Diameter of a Tree (using BFS)
+dp(u) = v(u) + Summation all [ max(0,dp(child)) ]
 
 **/
 
@@ -24,6 +24,7 @@ using namespace std;
 #define DBG(x)      cout << __LINE__ << " says: " << #x << " = " << (x) << endl
 #else
 #define DBG(x)
+#define endl "\n"
 #endif
 
 template<class T1, class T2>
@@ -41,62 +42,77 @@ inline void optimizeIO()
 
 const int nmax = 2e5+7;
 
-vector<int>adj[nmax];
+#define int long long
 
-PII bfs(int s,int n)
+vector<vector<int>>adj;
+
+vector<int>v;
+vector<int>dp;
+
+int ans = 0;
+
+void init_dp(int u,int p)
 {
-    vector<bool>vis(n+1,false);
-    vector<int>d(n+1,0);
+    dp[u] = v[u];
 
-    queue<int>q;
-    vis[s] = true;
-    d[s] = 0;
-    q.push(s);
-
-    while(!q.empty())
+    for(int v:adj[u])
     {
-        int now = q.front();
-        q.pop();
-
-        for(int next:adj[now])
+        if(v!=p)
         {
-            if(!vis[next])
-            {
-                vis[next] = true;
-                d[next] = d[now] + 1;
-                q.push(next);
-            }
+            init_dp(v,u);
+
+            dp[u] += max(0LL,dp[v]);
         }
     }
+}
 
-    int mx = 0 , mx_id = -1;
+void change_root(int old_root,int new_root)
+{
+    /// removing new root's contribution
+    dp[old_root] -= max(0LL,dp[new_root]);
 
-    for(int i=1;i<=n;i++)
+    /// adding old root as a child of new root
+    dp[new_root] += max(0LL,dp[old_root]);
+}
+
+vector<int>res;
+
+void dfs(int u,int p)
+{
+    res[u] = dp[u];
+
+    for(int v:adj[u])
     {
-        if(d[i]>mx)
+        if(v!=p)
         {
-            mx = d[i];
-            mx_id = i;
+            change_root(u,v);
+
+            dfs(v,u);
+
+            change_root(v,u);
         }
     }
-
-    return {mx,mx_id};
 }
 
-int diameter(int n)
+void INIT(int len)
 {
-    PII a  = bfs(1,n);
-    PII b  = bfs(a.S,n);
-
-    return b.F;
+    adj = vector<vector<int>>(len);
+    dp = vector<int>(len,0);
+    v = vector<int>(len,0);
+    res = vector<int>(len,0);
 }
 
-int main()
+int32_t main()
 {
     optimizeIO();
 
     int n;
     cin>>n;
+
+    INIT(n+1);
+
+    for(int i=1;i<=n;i++)
+        cin>>v[i] , v[i] == 0 ? v[i] = -1 : v[i]  = 1;
 
     for(int i=1;i<n;i++)
     {
@@ -107,15 +123,25 @@ int main()
         adj[b].push_back(a);
     }
 
+    init_dp(1,-1);
+    DBG(dp);
+    dfs(1,-1);
 
-    cout<<diameter(n)<<endl;
-
+    for(int i=1;i<=n;i++)
+        cout<<res[i]<<" ";
+    cout<<endl;
 
     return 0;
 }
 
 /**
-
+6
+5 2 3 3 2 4
+1 2
+2 3
+2 4
+3 5
+3 6
 **/
 
 template<class T1, class T2>
