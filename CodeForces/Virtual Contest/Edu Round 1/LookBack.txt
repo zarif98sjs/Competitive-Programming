@@ -1,0 +1,18 @@
+B
+----
+Make observation and reduce to a simplified state
+
+***C
+----
+
+Lesson 1 : How to sort points clockwise / anticlockwise i.e using quadrents or semiplanes
+
+lesson 2 : How to compare FRACTIONS wothout DOUBLE .
+
+Lesson 3 : How to compare angle between 2 set of vectors without using any DOUBLE .
+
+
+D
+----
+
+Easy . Dont make typo -_- Say out loud when typing
