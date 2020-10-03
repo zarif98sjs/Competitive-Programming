@@ -42,8 +42,9 @@ struct Graph
     bool dir;
     vector<vector<int>>adj;
 
-    vector<int>take;
-    vector<int>dontTake;
+    /// diameter
+    int diameter = 0;
+    vector<int>f,g;
 
     Graph(int n,bool dir)
     {
@@ -52,8 +53,8 @@ struct Graph
         int len = n+1;
 
         adj = vector<vector<int>>(len);
-        take = vector<int>(len);
-        dontTake = vector<int>(len);
+        f = vector<int>(len);
+        g = vector<int>(len);
     }
 
     void add_edge(int u,int v)
@@ -64,39 +65,32 @@ struct Graph
 
     void dfs(int u,int p)
     {
+        vector<int>depths;
+
         for(int v:adj[u])
         {
             if(v==p) continue;
 
             dfs(v,u);
+
+            depths.push_back(f[v]);
+
+//            if(!depths.empty() && depths.back()>depths[0]) swap(depths.back(),depths[0]);
+//            if(!depths.empty() && depths.back()>depths[1]) swap(depths.back(),depths[1]);
         }
 
-        for(int v:adj[u])
-        {
-            if(v==p) continue;
+        sort(ALL(depths));
+        reverse(ALL(depths));
 
-            dontTake[u] += max(take[v],dontTake[v]);
-        }
+        DBG(u);
+        DBG(depths);
 
-        int option = 0;
+        f[u] = 1;
+        if(!depths.empty()) f[u] += depths[0];
 
-        for(int v:adj[u])
-        {
-            if(v==p) continue;
+        if((int)depths.size()>=2) g[u] = 1 + depths[0] + depths[1];
 
-            /// taking the current u-v edge
-
-            int contribution =  dontTake[u] - max(take[v],dontTake[v]);  /// deleting current child's contribution
-            option = max(option, 1 + dontTake[v] + contribution );
-        }
-
-        take[u] = option;
-    }
-
-    int solve()
-    {
-        dfs(1,-1);
-        return max(take[1],dontTake[1]);
+        diameter = max(diameter,max(f[u],g[u]));
     }
 
 };
@@ -117,8 +111,8 @@ void solveTC()
         g.add_edge(a,b);
     }
 
-    cout<<g.solve()<<endl;
-
+    g.dfs(1,-1);
+    cout<<g.diameter-1<<endl; /// as the answer is in terms of number of nodes
 }
 
 int32_t main()
