@@ -75,6 +75,11 @@ struct Graph
         {
             if(v==p) continue;
 
+            /**
+            ans(v) = max[ dp(v,0) , dp(v,1) ]
+            dp(u,0) = ans(v) + ... ans(vi) + ... ans(vn)
+            **/
+
             dontTake[u] += max(take[v],dontTake[v]);
         }
 
@@ -84,10 +89,17 @@ struct Graph
         {
             if(v==p) continue;
 
-            /// taking the current u-v edge
+            /// taking the current u-vi edge
 
-            int contribution =  dontTake[u] - max(take[v],dontTake[v]);  /// deleting current child's contribution
-            option = max(option, 1 + dontTake[v] + contribution );
+            /***
+                dp(u,1) = 1 + ans(v) + ... dp(vi,0) + ... ans(vn)
+            ==> dp(u,1) = 1 + ans(v) + ... ans(vi) + ... ans(vn) - ans(vi) + dp(vi,0)
+            ==> dp(u,1) = 1 + dp(u,0) - ans(vi) + dp(vi,0)
+            ==> dp(u,1) = 1 + temp + dp(vi,0)
+            **/
+
+            int temp =  dontTake[u] - max(take[v],dontTake[v]);  /// deleting current child's contribution temporarily
+            option = max(option, 1 + dontTake[v] + temp );
         }
 
         take[u] = option;
