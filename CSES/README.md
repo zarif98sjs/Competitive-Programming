@@ -2,7 +2,7 @@
 
 # **Graph Algorithms**
 |  <h2>Name</h2> 	            | <h2>By Myself</h2> |  <h2>Tag</h2>  |   <h2>Interesting Ideas</h2>  |  <h2>Approach / Idea</h2> 	|
-|          :-:	        |    ---	|  ---	|---	|---	|
+|          :-:	        |    :-:	|  :-:	| :-:	| :-:	|
 |  **Counting Rooms**	|    Yes 	|  `Connected Component`	|   	|   	|
 |  **Labyrinth** 	    |    Yes    | `BFS` <br> `Path Finding` |   	|   	|
 |  **Building Roads**   |    Yes	|  `Connected Component` 	|   	|   	|
