@@ -1,14 +1,4 @@
 
-/**
-
-Solve(i,j) = maximum score for the range [i,j]
-
-Option 1 : take i , solve(i+1,j) is opponent's maximum score . So my score is v[i] + sum(i+1,j) - solve(i+1,j)
-Option 2 : take j , solve(i,j-1) is opponent's maximum score . So my score is v[j] + sum(i,j-1) - solve(i,j-1)
-
-**/
-
-
 /** Which of the favors of your Lord will you deny ? **/
 
 #include<bits/stdc++.h>
@@ -44,55 +34,53 @@ inline void optimizeIO()
     cin.tie(NULL);
 }
 
-#define int long long
-const int nmax = 5007;
-const int INF = 1e15;
-
-vector<int>v;
-vector<int>p;
+const int nmax = 505;
+const int INF = 1e9+7;
 
 int dp[nmax][nmax];
 
-int sum(int l,int r)
+int solve(int h,int w)
 {
-    return p[r] - p[l-1];
-}
+    if(h==w) return 0;
 
-int solve(int i,int j)
-{
-    if(i==j) return v[i];
-
-    int &ret = dp[i][j];
+    int &ret = dp[h][w];
     if(ret != -1) return ret;
 
-    ret = -INF;
+    ret = INF;
 
-    int op_mx_1 = solve(i+1,j);
-    int me_mx_1 = v[i] + sum(i+1,j) - op_mx_1;
-    ret = max(ret,me_mx_1);
-
-    int op_mx_2 = solve(i,j-1);
-    int me_mx_2 = v[j] + sum(i,j-1) - op_mx_2;
-    ret = max(ret,me_mx_2);
+    for(int x=1;x<=w;x++) ret = min(ret,1+solve(h,w-x)+solve(h,x));
+    for(int y=1;y<=h;y++) ret = min(ret,1+solve(h-y,w)+solve(y,w));
 
     return ret;
 }
 
 void solveTC()
 {
-    int n;
-    cin>>n;
+     int a,b;
+     cin>>a>>b;
 
-    v = vector<int>(n+1);
-    p = vector<int>(n+1);
+     dp[0][0] = 0;
 
-    for(int i=1;i<=n;i++) cin>>v[i];
-    for(int i=1;i<=n;i++) p[i] = p[i-1] + v[i];
+     for(int h=1;h<=a;h++)
+     {
+         for(int w=1;w<=b;w++)
+         {
+            int &ret = dp[h][w];
+             ret = INF;
 
-    memset(dp,-1,sizeof dp);
+             if(h==w)
+             {
+                ret = 0;
+                continue;
+             }
 
-    int ans = solve(1,n);
-    cout<<ans<<endl;
+             for(int x=1;x<=w;x++) ret = min(ret,1+dp[h][w-x]+dp[h][x]);
+             for(int y=1;y<=h;y++) ret = min(ret,1+dp[h-y][w]+dp[y][w]);
+
+         }
+     }
+
+     cout<<dp[a][b]<<endl;
 
 }
 
@@ -144,3 +132,5 @@ ostream &operator <<(ostream &os, set<T>&v)
     os<<" ]";
     return os;
 }
+
+

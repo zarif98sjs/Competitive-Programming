@@ -1,14 +1,4 @@
 
-/**
-
-Solve(i,j) = maximum score for the range [i,j]
-
-Option 1 : take i , solve(i+1,j) is opponent's maximum score . So my score is v[i] + sum(i+1,j) - solve(i+1,j)
-Option 2 : take j , solve(i,j-1) is opponent's maximum score . So my score is v[j] + sum(i,j-1) - solve(i,j-1)
-
-**/
-
-
 /** Which of the favors of your Lord will you deny ? **/
 
 #include<bits/stdc++.h>
@@ -44,56 +34,55 @@ inline void optimizeIO()
     cin.tie(NULL);
 }
 
-#define int long long
-const int nmax = 5007;
-const int INF = 1e15;
+const int nmax = 1e3+7;
 
-vector<int>v;
-vector<int>p;
+string g[nmax];
+bool vis[nmax][nmax];
+int r,c;
 
-int dp[nmax][nmax];
-
-int sum(int l,int r)
+bool ok(int i,int j)
 {
-    return p[r] - p[l-1];
+    if(i>=0 && i<r && j>=0 && j<c && g[i][j]!='#') return true;
+
+    return false;
 }
 
-int solve(int i,int j)
+vector<int>dx = {0,1,0,-1};
+vector<int>dy = {1,0,-1,0};
+
+int cc = 0;
+
+void dfs(int x,int y)
 {
-    if(i==j) return v[i];
+    vis[x][y] = true;
 
-    int &ret = dp[i][j];
-    if(ret != -1) return ret;
+    for(int i=0;i<4;i++)
+    {
+        int nx = x + dx[i];
+        int ny = y + dy[i];
 
-    ret = -INF;
-
-    int op_mx_1 = solve(i+1,j);
-    int me_mx_1 = v[i] + sum(i+1,j) - op_mx_1;
-    ret = max(ret,me_mx_1);
-
-    int op_mx_2 = solve(i,j-1);
-    int me_mx_2 = v[j] + sum(i,j-1) - op_mx_2;
-    ret = max(ret,me_mx_2);
-
-    return ret;
+        if(ok(nx,ny) && !vis[nx][ny])
+            dfs(nx,ny);
+    }
 }
 
 void solveTC()
 {
-    int n;
-    cin>>n;
+    cin>>r>>c;
 
-    v = vector<int>(n+1);
-    p = vector<int>(n+1);
+    for(int i=0;i<r;i++)
+        cin>>g[i];
 
-    for(int i=1;i<=n;i++) cin>>v[i];
-    for(int i=1;i<=n;i++) p[i] = p[i-1] + v[i];
+    for(int i=0;i<r;i++)
+    {
+        for(int j=0;j<c;j++)
+        {
+            if(ok(i,j) && !vis[i][j])
+                dfs(i,j) , cc++ ;
+        }
+    }
 
-    memset(dp,-1,sizeof dp);
-
-    int ans = solve(1,n);
-    cout<<ans<<endl;
-
+    cout<<cc<<endl;
 }
 
 int32_t main()
@@ -144,3 +133,4 @@ ostream &operator <<(ostream &os, set<T>&v)
     os<<" ]";
     return os;
 }
+

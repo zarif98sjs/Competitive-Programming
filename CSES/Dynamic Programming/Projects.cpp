@@ -1,14 +1,4 @@
 
-/**
-
-Solve(i,j) = maximum score for the range [i,j]
-
-Option 1 : take i , solve(i+1,j) is opponent's maximum score . So my score is v[i] + sum(i+1,j) - solve(i+1,j)
-Option 2 : take j , solve(i,j-1) is opponent's maximum score . So my score is v[j] + sum(i,j-1) - solve(i,j-1)
-
-**/
-
-
 /** Which of the favors of your Lord will you deny ? **/
 
 #include<bits/stdc++.h>
@@ -44,38 +34,24 @@ inline void optimizeIO()
     cin.tie(NULL);
 }
 
-#define int long long
-const int nmax = 5007;
-const int INF = 1e15;
+const int nmax = 2e5+7;
 
-vector<int>v;
-vector<int>p;
+int mx = 0;
 
-int dp[nmax][nmax];
-
-int sum(int l,int r)
+vector<PII> compress(vector<PII> &v) /// compress v to [1,max distinct number range]
 {
-    return p[r] - p[l-1];
-}
+    vector<PII>c = v;
+    map<int,int>m;
 
-int solve(int i,int j)
-{
-    if(i==j) return v[i];
+    for(auto x:c) m[x.F] = 1 , m[x.S] = 1;
 
-    int &ret = dp[i][j];
-    if(ret != -1) return ret;
+    int val = 0;
+    for(auto x:m) m[x.F] = ++val;
+    mx = val;
 
-    ret = -INF;
+    for(auto &x:c) x.F = m[x.F] , x.S = m[x.S];
 
-    int op_mx_1 = solve(i+1,j);
-    int me_mx_1 = v[i] + sum(i+1,j) - op_mx_1;
-    ret = max(ret,me_mx_1);
-
-    int op_mx_2 = solve(i,j-1);
-    int me_mx_2 = v[j] + sum(i,j-1) - op_mx_2;
-    ret = max(ret,me_mx_2);
-
-    return ret;
+    return c;
 }
 
 void solveTC()
@@ -83,17 +59,38 @@ void solveTC()
     int n;
     cin>>n;
 
-    v = vector<int>(n+1);
-    p = vector<int>(n+1);
+    vector<PII>v(n);
+    vector<int>p(n);
 
-    for(int i=1;i<=n;i++) cin>>v[i];
-    for(int i=1;i<=n;i++) p[i] = p[i-1] + v[i];
+    for(int i=0;i<n;i++) cin>>v[i].F>>v[i].S>>p[i];
 
-    memset(dp,-1,sizeof dp);
+    v = compress(v);
 
-    int ans = solve(1,n);
-    cout<<ans<<endl;
+    vector<vector<PII>>projects(mx+2);
 
+    for(int i=0;i<n;i++)
+    {
+        auto x = v[i];
+        projects[x.S].push_back({x.F,p[i]});
+    }
+
+//    DBG(mx);
+
+    vector<LL>dp(mx+2,0);
+
+    for(int i=1;i<=mx;i++)
+    {
+        dp[i] = dp[i-1]; /// no project done , so same gain as previous day
+
+        for(auto x:projects[i])
+        {
+            dp[i] = max(dp[i],dp[x.F-1] + x.S); /// max upto this project's staring time + this project's money
+        }
+
+//        DBG(dp[i]);
+    }
+
+    cout<<dp[mx]<<endl;
 }
 
 int32_t main()
