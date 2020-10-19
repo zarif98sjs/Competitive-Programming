@@ -13,7 +13,7 @@
 |  **Shortest Routes I** 	|  Yes 	|  `Dijkstra` 	             |  **`Dijkstra optimization`** by checking **if current distance is the minimum one or not** 	|   	|
 |  **Shortest Routes II**	|  Yes 	|  `Floyd Warshall`  |   	|   	|
 |  **High Score** 	    |     Yes   |  `Bellman Ford` <br> `Negative Cycle`	|  (1) Finding the nodes that are part of negative cycle using Bellman Ford <br> (2) In a **`directed graph`** , the efficient way to check if a node can be reached from multiple nodes is dfs from **`reverse graph`** |  We need to know if there is a cycle in the path a->b <br> Now , we find all the nodes that are part of the negative cycle in the original graph . Then we have to check if there is a path from these negative cycle nodes to b <br> To do this efficiently , my idea is to reverse the graph and check if there exists a path from b to any of these nodes 	|
-|  **Flight Discount** 	|   **`No`**   | `Dijkstra` <br> `DP` 	|   **`DP with Dijkstra`** 	|   	|
+|  **Flight Discount** 	|   **`No`**   | `Dijkstra` <br> `DP` <br> `Reverse Graph`	|   (1) **`DP with Dijkstra`** <br> (2) Same 2nd idea mentioned in "High Score" Problem , now we can also find shortest path using the reverse graph . The idea is soo nice	|   	|
 |  **Cycle Finding**	|   	        |   	|   	|   	|
 |  **Flight Routes** 	|   **`No`**	| `Dijsktra` <br> `kth shortest path` |  `Optimal updating` using `sorting` when **tracking multimple maximum / minimum** 	|   	|
 |  **Round Trip II** 	|   	|   	|   	|   	|
